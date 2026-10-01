@@ -1,0 +1,557 @@
+<title>Eunice Delali Alomatu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  /* Layout concept: a ledger-inspired single column — sticky masthead,
+     a ticker-style impact strip, and a ruled timeline down the margin,
+     evoking a financial report rather than a generic "creative" portfolio. */
+  :root{
+    --bg:#EEF1EF;
+    --surface:#FFFFFF;
+    --surface-2:#E3E9E6;
+    --ink:#121D22;
+    --muted:#53666B;
+    --accent:#7C5A24;
+    --accent-soft:#E9DEC6;
+    --line:#D2D9D6;
+    --shadow: 0 1px 2px rgba(18,29,34,.06), 0 8px 24px rgba(18,29,34,.05);
+    color-scheme: light;
+
+    --font-display: 'Source Serif 4', 'Iowan Old Style', Georgia, serif;
+    --font-body: 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif;
+    --font-mono: 'IBM Plex Mono', 'SFMono-Regular', Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0D1416;
+      --surface:#141E21;
+      --surface-2:#1B2729;
+      --ink:#E9EEEC;
+      --muted:#96A8AA;
+      --accent:#D0A75B;
+      --accent-soft:#3A2F1C;
+      --line:#283436;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0D1416;
+    --surface:#141E21;
+    --surface-2:#1B2729;
+    --ink:#E9EEEC;
+    --muted:#96A8AA;
+    --accent:#D0A75B;
+    --accent-soft:#3A2F1C;
+    --line:#283436;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
+    color-scheme: dark;
+  }
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth; scroll-padding-top:4.5rem}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:var(--font-body);
+    font-size:16px; line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  @media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} }
+
+  .wrap{max-width:52rem; margin:0 auto; padding-inline:1.5rem}
+
+  h1,h2,h3{font-family:var(--font-display); font-weight:600; text-wrap:balance; margin:0}
+  p{margin:0}
+  a{color:inherit}
+
+  .eyebrow{
+    font-family:var(--font-mono); font-size:.72rem; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--accent); margin:0 0 .9rem;
+  }
+
+  /* Masthead */
+  header.masthead{
+    position:sticky; top:env(safe-area-inset-top,0px); z-index:10;
+    background:color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  .masthead-inner{
+    display:flex; align-items:center; justify-content:space-between; gap:1rem;
+    padding-block:.75rem;
+  }
+  .monogram{
+    display:flex; align-items:center; gap:.6rem;
+    font-family:var(--font-display); font-weight:600; font-size:1rem;
+    white-space:nowrap;
+  }
+  .monogram-mark{
+    display:grid; place-items:center;
+    width:2rem; height:2rem; border-radius:50%;
+    background:var(--ink); color:var(--bg);
+    font-family:var(--font-mono); font-size:.72rem; letter-spacing:.03em;
+    overflow:hidden; flex:none;
+  }
+  .monogram-mark img{ width:100%; height:100%; object-fit:cover; display:block }
+  nav.links{
+    display:flex; gap:1.25rem; overflow-x:auto; scrollbar-width:none;
+    font-size:.86rem;
+  }
+  nav.links::-webkit-scrollbar{display:none}
+  nav.links a{
+    text-decoration:none; color:var(--muted); white-space:nowrap;
+    padding-block:.25rem; border-bottom:2px solid transparent;
+  }
+  nav.links a:hover, nav.links a:focus-visible{ color:var(--ink); border-color:var(--accent) }
+
+  /* Hero */
+  .hero{ padding-block:3.25rem 2.5rem }
+  .hero-grid{
+    display:grid; grid-template-columns:1fr 13.5rem; gap:2.75rem;
+    align-items:start;
+  }
+  .hero h1{ font-size:clamp(2.1rem, 5vw, 3rem); letter-spacing:-.01em }
+  .hero .tagline{
+    margin-top:1rem; max-width:40rem; color:var(--muted); font-size:1.05rem;
+  }
+  .hero-photo{ justify-self:end }
+  .hero-photo img{
+    width:100%; aspect-ratio:3/4; object-fit:cover; display:block;
+    border-radius:10px; border:1px solid var(--line); box-shadow:var(--shadow);
+  }
+  .contact-row{
+    display:flex; flex-wrap:wrap; gap:.6rem; margin-top:1.6rem;
+  }
+  @media (max-width:720px){
+    .hero-grid{ grid-template-columns:1fr }
+    .hero-photo{ order:-1; justify-self:start; max-width:9.5rem; margin-bottom:.5rem }
+  }
+  .pill{
+    display:inline-flex; align-items:center; gap:.45rem;
+    border:1px solid var(--line); background:var(--surface);
+    border-radius:999px; padding:.45rem .9rem;
+    font-family:var(--font-mono); font-size:.82rem; color:var(--ink);
+    text-decoration:none; cursor:pointer;
+  }
+  .pill:hover{ border-color:var(--accent) }
+  .pill svg{ width:14px; height:14px; flex:none }
+  .pill .copied{ color:var(--accent); display:none }
+  .pill.just-copied .label{ display:none }
+  .pill.just-copied .copied{ display:inline }
+
+  /* Stat ticker */
+  .stats{
+    border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+    background:var(--surface);
+  }
+  .stats-grid{
+    display:grid; grid-template-columns:repeat(4,1fr);
+  }
+  .stat{
+    padding:1.4rem 1.2rem;
+    border-left:1px solid var(--line);
+  }
+  .stat:first-child{ border-left:none }
+  .stat .value{
+    font-family:var(--font-mono); font-variant-numeric:tabular-nums;
+    font-size:clamp(1.3rem,3vw,1.6rem); font-weight:500; color:var(--accent);
+  }
+  .stat .label{
+    margin-top:.35rem; font-size:.78rem; color:var(--muted); line-height:1.45;
+  }
+  .stats-note{
+    font-size:.72rem; color:var(--muted); padding:.6rem 1.2rem 1rem;
+  }
+  @media (max-width:640px){
+    .stats-grid{ grid-template-columns:repeat(2,1fr) }
+    .stat:nth-child(3){ border-left:none }
+  }
+
+  section{ padding-block:3rem }
+  section > h2{
+    font-size:1.5rem; margin-bottom:1.5rem;
+    display:flex; align-items:baseline; gap:.75rem;
+  }
+  section > h2::after{
+    content:""; flex:1; height:1px; background:var(--line);
+  }
+
+  .lede{ color:var(--muted); max-width:42rem; margin-bottom:1.5rem }
+
+  /* Timeline */
+  .timeline{ list-style:none; margin:0; padding:0; border-left:1px solid var(--line) }
+  .entry{ position:relative; padding:0 0 2.25rem 1.6rem }
+  .entry:last-child{ padding-bottom:0 }
+  .entry::before{
+    content:""; position:absolute; left:-4px; top:.4rem;
+    width:7px; height:7px; border-radius:50%; background:var(--accent);
+  }
+  .entry-head{
+    display:flex; flex-wrap:wrap; justify-content:space-between; gap:.5rem .75rem;
+    align-items:baseline;
+  }
+  .entry-role{ font-family:var(--font-display); font-weight:600; font-size:1.08rem }
+  .entry-dates{
+    font-family:var(--font-mono); font-size:.78rem; color:var(--muted);
+    white-space:nowrap;
+  }
+  .entry-org{ font-size:.92rem; margin-top:.15rem }
+  .entry-context{ font-size:.82rem; color:var(--muted); font-style:italic; margin-top:.2rem }
+  .entry ul{ margin:.75rem 0 0; padding-left:1.1rem; color:var(--ink) }
+  .entry li{ margin-bottom:.4rem; font-size:.94rem }
+  .entry li::marker{ color:var(--accent) }
+
+  /* Education */
+  .ed-grid{ display:grid; gap:1.25rem; grid-template-columns:repeat(2,1fr) }
+  .card{
+    background:var(--surface); border:1px solid var(--line); border-radius:8px;
+    padding:1.4rem; box-shadow:var(--shadow);
+  }
+  .card .entry-dates{ display:block; margin-top:.2rem }
+  .card ul{ margin:.75rem 0 0; padding-left:1.1rem; font-size:.9rem; color:var(--muted) }
+  .card li{ margin-bottom:.35rem }
+  @media (max-width:640px){ .ed-grid{ grid-template-columns:1fr } }
+
+  /* Skills */
+  .skill-group{ margin-bottom:1.5rem }
+  .skill-group h3{
+    font-family:var(--font-body); font-weight:600; font-size:.82rem;
+    text-transform:uppercase; letter-spacing:.08em; color:var(--muted);
+    margin-bottom:.75rem;
+  }
+  .chips{ display:flex; flex-wrap:wrap; gap:.55rem }
+  .chip{
+    border:1px solid var(--line); background:var(--surface);
+    border-radius:6px; padding:.4rem .75rem; font-size:.86rem;
+  }
+
+  /* Leadership */
+  .lead-list{ list-style:none; margin:0; padding:0; display:grid; gap:1rem }
+  .lead-list li{
+    display:grid; grid-template-columns:1.1rem 1fr; gap:.75rem;
+    font-size:.95rem; padding-bottom:1rem; border-bottom:1px solid var(--line);
+  }
+  .lead-list li:last-child{ border-bottom:none; padding-bottom:0 }
+  .lead-list .dot{
+    width:1.1rem; height:1.1rem; border-radius:50%; margin-top:.15rem;
+    background:var(--accent-soft); color:var(--accent);
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-mono); font-size:.65rem;
+  }
+  .lead-list strong{ font-weight:600 }
+  .lead-list .meta{ color:var(--muted); font-size:.85rem; display:block; margin-top:.2rem }
+
+  footer{
+    border-top:1px solid var(--line); padding-block:3rem 3.5rem;
+    background:var(--surface);
+  }
+  footer h2{ font-size:1.5rem; margin-bottom:.75rem }
+  footer p.lede{ margin-bottom:1.5rem }
+  .foot-meta{
+    margin-top:2.5rem; padding-top:1.5rem; border-top:1px solid var(--line);
+    display:flex; flex-wrap:wrap; justify-content:space-between; gap:.5rem;
+    font-size:.78rem; color:var(--muted); font-family:var(--font-mono);
+  }
+</style>
+
+<header class="masthead">
+  <div class="wrap masthead-inner">
+    <a href="#top" class="monogram" style="text-decoration:none;color:inherit">
+      <span class="monogram-mark"><img src="headshot.jpg" alt=""></span>
+      <span>Eunice Alomatu</span>
+    </a>
+    <nav class="links">
+      <a href="#about">Profile</a>
+      <a href="#experience">Experience</a>
+      <a href="#education">Education</a>
+      <a href="#skills">Skills</a>
+      <a href="#leadership">Leadership</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero wrap" id="top">
+    <div class="hero-grid">
+      <div class="hero-text">
+        <p class="eyebrow">Finance &middot; Credit Risk &middot; AI-Enabled Operations</p>
+        <h1>Eunice Delali Alomatu</h1>
+        <p class="tagline">MBA candidate at the Haas School of Business, UC Berkeley, bringing five years structuring
+          and managing credit across African banking into AI-enabled financial operations &mdash; most recently
+          building cost-allocation tooling for AWS's network infrastructure business.</p>
+        <div class="contact-row">
+          <button class="pill" id="copy-email" type="button" aria-label="Copy email address">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z"/><path d="m4 6 8 7 8-7"/></svg>
+            <span class="label">eunice_alomatu@berkeley.edu</span>
+            <span class="copied">Copied email ✓</span>
+          </button>
+          <button class="pill" id="copy-phone" type="button" aria-label="Copy phone number">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.68 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.32 1.85.55 2.81.68A2 2 0 0 1 22 16.92Z"/></svg>
+            <span class="label">(510) 646-6340</span>
+            <span class="copied">Copied number ✓</span>
+          </button>
+          <a class="pill" href="https://www.linkedin.com/in/eunice-delali-alomatu" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/><path d="M10 9h4v12h-4z"/><path d="M14 13a4 4 0 0 1 8 0v8h-4v-7a1 1 0 0 0-2 0"/></svg>
+            <span class="label">LinkedIn</span>
+          </a>
+          <a class="pill" href="resume.pdf" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+            <span class="label">Resume (PDF)</span>
+          </a>
+        </div>
+      </div>
+      <div class="hero-photo">
+        <img src="headshot.jpg" alt="Portrait of Eunice Delali Alomatu">
+      </div>
+    </div>
+  </section>
+
+  <section class="stats" aria-label="Career impact, by the numbers">
+    <div class="wrap">
+      <div class="stats-grid">
+        <div class="stat">
+          <div class="value">$1.4B</div>
+          <div class="label">Annual AWS network spend allocated by a dashboard she built</div>
+        </div>
+        <div class="stat">
+          <div class="value">$100M+</div>
+          <div class="label">Credit facilities originated or structured across banking roles*</div>
+        </div>
+        <div class="stat">
+          <div class="value">70%</div>
+          <div class="label">Reduction in cost-explainability time after embedding an AI assistant</div>
+        </div>
+        <div class="stat">
+          <div class="value">200+</div>
+          <div class="label">SMEs reached through an IFC-backed financing expansion</div>
+        </div>
+      </div>
+      <p class="stats-note">*Cumulative total of facilities stated as originated or structured across First National Bank and Access Bank roles below.</p>
+    </div>
+  </section>
+
+  <section class="wrap" id="about">
+    <h2>Profile</h2>
+    <p class="lede" style="max-width:48rem">
+      Eunice spent five years on the credit side of African banking &mdash; underwriting, structuring, and
+      monitoring facilities from smallholder agriculture to syndicated mining loans &mdash; before a merit-based
+      scholarship brought her to Haas for an MBA. At Amazon, she carried that financial-modeling discipline into a
+      different register: automating cost allocation for a $1.4B AWS infrastructure budget and wiring an AI
+      assistant into the workflow so planners could ask the dashboard "why" and get an answer. She holds First
+      Class Honors in Banking &amp; Finance, is a chartered accountant and chartered banker by credential, and is
+      now building fluency in SQL and agentic AI workflows to match.
+    </p>
+  </section>
+
+  <section class="wrap" id="experience">
+    <h2>Experience</h2>
+    <ol class="timeline">
+      <li class="entry">
+        <div class="entry-head">
+          <span class="entry-role">Finance Manager Intern, AWS Network Infrastructure</span>
+          <span class="entry-dates">Jun 2026 &ndash; Aug 2026</span>
+        </div>
+        <div class="entry-org">Amazon &middot; Seattle, USA</div>
+        <ul>
+          <li>Built an automated dashboard allocating ~$1.4B in annual AWS networking costs and integrated an AI
+            assistant to explain cost drivers across planning cycles.</li>
+          <li>Improved cost-allocation visibility and reduced explainability hours by 70%.</li>
+        </ul>
+      </li>
+      <li class="entry">
+        <div class="entry-head">
+          <span class="entry-role">Credit Origination Associate, Commercial &amp; Business Banking</span>
+          <span class="entry-dates">Jan 2025 &ndash; Jul 2025</span>
+        </div>
+        <div class="entry-org">First National Bank &middot; Accra, Ghana</div>
+        <div class="entry-context">Part of FirstRand Group, the second-largest financial group in Africa, with ~$160B in assets</div>
+        <ul>
+          <li>Structured $5M+ in agribusiness financing under Mastercard's Bridge-in-Agriculture program; built a
+            data-driven dashboard to monitor portfolio health, contributing to 5% portfolio growth.</li>
+          <li>Originated $15M+ in term loans, revolvers, guarantees, and trade facilities; built cash-flow-based
+            models evaluating debt capacity and liquidity risk, driving 3% growth in risk assets.</li>
+          <li>Conducted cashflow and liquidity analysis across 100+ corporate clients and implemented customized
+            repayment structures that reduced defaults by 5%.</li>
+        </ul>
+      </li>
+      <li class="entry">
+        <div class="entry-head">
+          <span class="entry-role">Credit Risk Analyst, Business Banking</span>
+          <span class="entry-dates">Aug 2022 &ndash; Dec 2024</span>
+        </div>
+        <div class="entry-org">Access Bank Plc &middot; Accra, Ghana</div>
+        <div class="entry-context">Part of Access Holdings Plc, a multinational commercial bank with ~$39B in assets serving 42M+ customers</div>
+        <ul>
+          <li>Led due diligence for $20M+ in credit facilities financing a major infrastructure project, presenting
+            to the management credit committee and driving a 3% increase in loan portfolio.</li>
+          <li>Partnered with a six-person team to implement an IFC risk-sharing agreement, securing a 50% guarantee
+            on loans and expanding financing to 200+ SMEs.</li>
+          <li>Originated $10M+ in working capital facilities for multinational energy clients, modeling volatile
+            commodity-price and FX scenarios to enable a 40% expansion in fuel distribution.</li>
+          <li>Structured the bank's participation in a $50M+ syndicated credit facility for a mining company,
+            supporting a 30% production-capacity expansion and 100+ new jobs.</li>
+        </ul>
+      </li>
+      <li class="entry">
+        <div class="entry-head">
+          <span class="entry-role">Customer Service Officer &ndash; Management Trainee</span>
+          <span class="entry-dates">Mar 2022 &ndash; Aug 2022</span>
+        </div>
+        <div class="entry-org">Access Bank Plc &middot; Accra, Ghana</div>
+        <ul>
+          <li>Drove branch-level financial product campaigns, increasing digital product sales by 15% and branch
+            profit by 10%.</li>
+        </ul>
+      </li>
+      <li class="entry">
+        <div class="entry-head">
+          <span class="entry-role">Branch Operations Assistant</span>
+          <span class="entry-dates">Sep 2019 &ndash; Dec 2021</span>
+        </div>
+        <div class="entry-org">Agricultural Development Bank &middot; Accra, Ghana</div>
+        <div class="entry-context">A leading state-owned bank specialized in agribusiness lending, with ~$2B in assets</div>
+        <ul>
+          <li>Redesigned loan-verification workflows, cutting application turnaround time by 15% and expanding
+            smallholder farmer access to $2M+ in seasonal financing.</li>
+        </ul>
+      </li>
+    </ol>
+  </section>
+
+  <section class="wrap" id="education">
+    <h2>Education</h2>
+    <div class="ed-grid">
+      <div class="card">
+        <span class="entry-dates">Expected May 2027</span>
+        <h3 style="margin-top:.35rem;font-size:1.05rem">MBA &mdash; Haas School of Business</h3>
+        <div class="entry-org" style="font-size:.88rem;color:var(--muted)">University of California, Berkeley</div>
+        <ul>
+          <li>Merit-based scholarship recipient &mdash; awarded to under 10% of students for academic excellence</li>
+          <li>Haas International Students Representative; Co-President, Africa Business Club</li>
+          <li>Member: Finance, Tech, Healthcare, and AI Clubs</li>
+        </ul>
+      </div>
+      <div class="card">
+        <span class="entry-dates">June 2019</span>
+        <h3 style="margin-top:.35rem;font-size:1.05rem">BSc, Banking &amp; Finance</h3>
+        <div class="entry-org" style="font-size:.88rem;color:var(--muted)">University of Professional Studies, Accra</div>
+        <ul>
+          <li>Graduated with First Class Honors</li>
+          <li>VP, Banking &amp; Finance Association &mdash; grew membership past 300 and ran finance competitions</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap" id="skills">
+    <h2>Skills &amp; Certifications</h2>
+    <div class="skill-group">
+      <h3>Certifications</h3>
+      <div class="chips">
+        <span class="chip">Associate, Institute of Chartered Accountants, Ghana (CPA equivalent)</span>
+        <span class="chip">Associate, Institute of Chartered Bankers, Nigeria</span>
+        <span class="chip">Financial Modeling &amp; Valuation Analyst &mdash; CFI</span>
+        <span class="chip">AWS Certified AI Practitioner</span>
+      </div>
+    </div>
+    <div class="skill-group">
+      <h3>Technical</h3>
+      <div class="chips">
+        <span class="chip">Financial Modeling</span>
+        <span class="chip">Credit Risk Analysis</span>
+        <span class="chip">SQL</span>
+        <span class="chip">Data Analysis</span>
+        <span class="chip">Agentic AI Workflows</span>
+        <span class="chip">Claude Coding</span>
+        <span class="chip">Microsoft Office</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap" id="leadership">
+    <h2>Leadership &amp; Community</h2>
+    <ul class="lead-list">
+      <li>
+        <span class="dot">●</span>
+        <span><strong>Haas International Students Representative &amp; Co-President, Africa Business Club</strong>
+        <span class="meta">Also Student Assistant and Peer Advisor &mdash; UC Berkeley, Haas School of Business</span></span>
+      </li>
+      <li>
+        <span class="dot">●</span>
+        <span><strong>Cofounder, Joysticks for Funds</strong>
+        <span class="meta">Organized gaming tournaments to support 30+ underprivileged people</span></span>
+      </li>
+      <li>
+        <span class="dot">●</span>
+        <span><strong>VP, Banking &amp; Finance Association</strong>
+        <span class="meta">University of Professional Studies, Accra &mdash; grew the association to 300+ members</span></span>
+      </li>
+    </ul>
+  </section>
+</main>
+
+<footer id="contact">
+  <div class="wrap">
+    <h2>Let's connect</h2>
+    <p class="lede">Open to conversations on finance, credit, and where AI actually earns its keep in financial
+      operations. The fastest way to reach me is email.</p>
+    <div class="contact-row">
+      <button class="pill" id="copy-email-2" type="button" aria-label="Copy email address">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z"/><path d="m4 6 8 7 8-7"/></svg>
+        <span class="label">eunice_alomatu@berkeley.edu</span>
+        <span class="copied">Copied email ✓</span>
+      </button>
+      <a class="pill" href="https://www.linkedin.com/in/eunice-delali-alomatu" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/><path d="M10 9h4v12h-4z"/><path d="M14 13a4 4 0 0 1 8 0v8h-4v-7a1 1 0 0 0-2 0"/></svg>
+        <span class="label">LinkedIn</span>
+      </a>
+      <a class="pill" href="resume.pdf" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+        <span class="label">Resume (PDF)</span>
+      </a>
+    </div>
+    <div class="foot-meta">
+      <span>Eunice Delali Alomatu</span>
+      <span>Berkeley, CA</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  (function(){
+    function wireCopy(id, text){
+      var btn = document.getElementById(id);
+      if(!btn) return;
+      btn.addEventListener('click', function(){
+        function done(){
+          btn.classList.add('just-copied');
+          setTimeout(function(){ btn.classList.remove('just-copied'); }, 1800);
+        }
+        try{
+          navigator.clipboard.writeText(text).then(done, function(){ fallback(); });
+        }catch(e){ fallback(); }
+        function fallback(){
+          try{
+            var range = document.createRange();
+            var span = document.createElement('span');
+            span.textContent = text;
+            span.style.position='fixed'; span.style.opacity='0';
+            document.body.appendChild(span);
+            range.selectNode(span);
+            var sel = window.getSelection();
+            sel.removeAllRanges(); sel.addRange(range);
+            document.execCommand('copy');
+            sel.removeAllRanges();
+            document.body.removeChild(span);
+            done();
+          }catch(e){}
+        }
+      });
+    }
+    wireCopy('copy-email', 'eunice_alomatu@berkeley.edu');
+    wireCopy('copy-email-2', 'eunice_alomatu@berkeley.edu');
+    wireCopy('copy-phone', '(510) 646-6340');
+  })();
+</script>
