@@ -1,0 +1,486 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>SME Credit Desk</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  /* Layout: a credit committee worksheet. Inputs on the left like a term sheet,
+     the analyst's read-out on the right: grade, ratio ledger, stress test, memo.
+     Palette and type match Eunice's portfolio site so the two feel like one body of work. */
+  :root{
+    --bg:#EEF1EF; --surface:#FFFFFF; --surface-2:#E3E9E6;
+    --ink:#121D22; --muted:#53666B; --line:#D2D9D6;
+    --accent:#7C5A24; --accent-soft:#E9DEC6;
+    --good:#2F6B4F; --good-soft:#DCEBE2;
+    --warn:#9A6A12; --warn-soft:#F3E6C9;
+    --bad:#A2352B; --bad-soft:#F4DDD9;
+    --shadow:0 1px 2px rgba(18,29,34,.06), 0 8px 24px rgba(18,29,34,.05);
+    --font-display:'Source Serif 4','Iowan Old Style',Georgia,serif;
+    --font-body:'IBM Plex Sans','Segoe UI',system-ui,sans-serif;
+    --font-mono:'IBM Plex Mono','SFMono-Regular',Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0D1416; --surface:#141E21; --surface-2:#1B2729;
+      --ink:#E9EEEC; --muted:#96A8AA; --line:#283436;
+      --accent:#D0A75B; --accent-soft:#3A2F1C;
+      --good:#7CC4A0; --good-soft:#18302A;
+      --warn:#E2B866; --warn-soft:#3A2F1C;
+      --bad:#EE8F84; --bad-soft:#3A1F1C;
+      --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
+      color-scheme:dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0D1416; --surface:#141E21; --surface-2:#1B2729;
+    --ink:#E9EEEC; --muted:#96A8AA; --line:#283436;
+    --accent:#D0A75B; --accent-soft:#3A2F1C;
+    --good:#7CC4A0; --good-soft:#18302A;
+    --warn:#E2B866; --warn-soft:#3A2F1C;
+    --bad:#EE8F84; --bad-soft:#3A1F1C;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
+    color-scheme:dark;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:var(--font-body); font-size:15px; line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{
+    max-width:72rem; margin:0 auto;
+    padding-left:max(16px, env(safe-area-inset-left, 0px));
+    padding-right:max(16px, env(safe-area-inset-right, 0px));
+  }
+  h1,h2,h3{font-family:var(--font-display); font-weight:600; margin:0; text-wrap:balance}
+  p{margin:0}
+  a{color:inherit}
+  .eyebrow{
+    font-family:var(--font-mono); font-size:.7rem; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--accent);
+  }
+  .num{font-family:var(--font-mono); font-variant-numeric:tabular-nums}
+
+  header.top{padding-block:2rem 1.25rem; display:grid; gap:.6rem}
+  header.top h1{font-size:clamp(1.7rem,4vw,2.3rem); letter-spacing:-.01em}
+  header.top .sub{color:var(--muted); max-width:44rem}
+  .byline{font-size:.85rem; color:var(--muted)}
+  .byline a{color:var(--accent); text-decoration:none; border-bottom:1px solid var(--accent-soft)}
+  .byline a:hover{border-color:var(--accent)}
+
+  .presets{display:flex; flex-wrap:wrap; gap:.5rem; align-items:center; padding-bottom:1.25rem}
+  .presets .lbl{font-size:.78rem; color:var(--muted); margin-right:.25rem}
+  .chip{
+    font:500 .82rem var(--font-body); color:var(--ink);
+    background:var(--surface); border:1px solid var(--line); border-radius:999px;
+    padding:.4rem .85rem; cursor:pointer;
+  }
+  .chip:hover{border-color:var(--accent)}
+  .chip[aria-pressed="true"]{background:var(--ink); color:var(--bg); border-color:var(--ink)}
+  .chip:focus-visible,.btn:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+
+  .desk{display:grid; grid-template-columns:minmax(0,22rem) minmax(0,1fr); gap:1.5rem; padding-bottom:3rem; align-items:start}
+  @media (max-width:860px){ .desk{grid-template-columns:minmax(0,1fr)} }
+
+  /* Term sheet */
+  .sheet{background:var(--surface); border:1px solid var(--line); border-radius:10px; box-shadow:var(--shadow); padding:1.25rem}
+  .sheet h2{font-size:1.05rem; margin-bottom:.15rem}
+  .sheet .hint{font-size:.8rem; color:var(--muted); margin-bottom:1rem}
+  fieldset{border:0; margin:0 0 1.1rem; padding:0; display:grid; gap:.65rem}
+  legend{font-size:.72rem; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); font-weight:600; margin-bottom:.5rem; padding:0}
+  .row2{display:grid; grid-template-columns:1fr 1fr; gap:.65rem}
+  label{display:grid; gap:.25rem; font-size:.8rem; color:var(--muted); min-width:0}
+  input,select{
+    width:100%; min-width:0; font:500 .92rem var(--font-mono); font-variant-numeric:tabular-nums;
+    color:var(--ink); background:var(--bg); border:1px solid var(--line); border-radius:6px; padding:.5rem .6rem;
+  }
+  input[type="text"]{font-family:var(--font-body)}
+  select{font-family:var(--font-body)}
+
+  /* Read-out */
+  .readout{display:grid; gap:1.25rem; min-width:0}
+  .verdict{
+    background:var(--surface); border:1px solid var(--line); border-radius:10px; box-shadow:var(--shadow);
+    padding:1.25rem; display:grid; grid-template-columns:auto 1fr; gap:1.25rem; align-items:center;
+  }
+  .grade{
+    width:5.5rem; height:5.5rem; border-radius:50%; display:grid; place-items:center; text-align:center;
+    border:2px solid currentColor; line-height:1.05;
+  }
+  .grade b{display:block; font:500 2rem var(--font-mono)}
+  .grade small{font-size:.62rem; letter-spacing:.1em; text-transform:uppercase}
+  .tone-good{color:var(--good)} .tone-warn{color:var(--warn)} .tone-bad{color:var(--bad)}
+  .bg-good{background:var(--good-soft); color:var(--good)}
+  .bg-warn{background:var(--warn-soft); color:var(--warn)}
+  .bg-bad{background:var(--bad-soft); color:var(--bad)}
+  .verdict h2{font-size:1.4rem}
+  .verdict .why{color:var(--muted); font-size:.9rem; margin-top:.3rem}
+  .pill{display:inline-block; font:600 .72rem var(--font-body); letter-spacing:.06em; text-transform:uppercase; padding:.25rem .6rem; border-radius:999px; margin-bottom:.4rem}
+  @media (max-width:480px){ .verdict{grid-template-columns:1fr} }
+
+  .panel{background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:1.25rem; min-width:0}
+  .panel h3{font-size:1rem; margin-bottom:.85rem; display:flex; align-items:baseline; gap:.6rem}
+  .panel h3 .eyebrow{margin-left:auto}
+
+  .ledger{width:100%; border-collapse:collapse; font-size:.88rem}
+  .ledger-scroll{overflow-x:auto}
+  .ledger th{text-align:left; font-weight:500; color:var(--muted); font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; padding:0 .5rem .5rem 0; border-bottom:1px solid var(--line)}
+  .ledger td{padding:.65rem .5rem .65rem 0; border-bottom:1px solid var(--line); vertical-align:top}
+  .ledger tr:last-child td{border-bottom:0}
+  .ledger td.v{text-align:right; white-space:nowrap}
+  .ledger th.v{text-align:right}
+  .ledger .what{font-weight:500}
+  .ledger .def{display:block; font-size:.76rem; color:var(--muted)}
+  .flag{display:inline-block; min-width:4.6rem; text-align:center; font:600 .7rem var(--font-body); letter-spacing:.05em; text-transform:uppercase; padding:.2rem .45rem; border-radius:4px}
+
+  .stress{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:.75rem}
+  .case{border:1px solid var(--line); border-radius:8px; padding:.85rem; display:grid; gap:.2rem}
+  .case .k{font-size:.74rem; color:var(--muted)}
+  .case .d{font-size:1.35rem}
+  .bar{height:6px; border-radius:3px; background:var(--surface-2); overflow:hidden; margin-top:.35rem}
+  .bar i{display:block; height:100%; border-radius:3px}
+  @media (max-width:560px){ .stress{grid-template-columns:minmax(0,1fr)} }
+
+  .conds{margin:0; padding-left:1.1rem; display:grid; gap:.4rem; font-size:.9rem}
+  .conds li::marker{color:var(--accent)}
+
+  .memo{font-family:var(--font-display); font-size:1rem; line-height:1.65; display:grid; gap:.75rem; max-width:62ch}
+  .memo .tag{font-family:var(--font-mono); font-size:.72rem; color:var(--muted)}
+  .ai-row{display:flex; flex-wrap:wrap; gap:.6rem; align-items:center; margin-top:1rem; padding-top:1rem; border-top:1px dashed var(--line)}
+  .btn{
+    font:600 .85rem var(--font-body); border-radius:6px; padding:.55rem 1rem; cursor:pointer;
+    background:var(--ink); color:var(--bg); border:1px solid var(--ink);
+  }
+  .btn.ghost{background:transparent; color:var(--ink); border-color:var(--line)}
+  .btn[disabled]{opacity:.55; cursor:default}
+  .ai-note{font-size:.8rem; color:var(--muted)}
+  .ai-out{white-space:pre-wrap; font-family:var(--font-display); font-size:1rem; line-height:1.65; max-width:62ch; margin-top:1rem}
+  .ai-out[hidden]{display:none}
+
+  footer{border-top:1px solid var(--line); padding-block:1.5rem 2.5rem; font-size:.82rem; color:var(--muted)}
+  footer .wrap{display:flex; flex-wrap:wrap; justify-content:space-between; gap:.75rem}
+  @media (prefers-reduced-motion: reduce){ *{transition:none!important} }
+  .bar i{transition:width .35s ease}
+</style>
+
+<header class="wrap top">
+  <p class="eyebrow">Credit analysis demo</p>
+  <h1>SME Credit Desk</h1>
+  <p class="sub">Enter a small business's numbers and a proposed loan. The desk computes the ratios a credit committee looks at, stress-tests repayment, assigns an internal risk grade, and drafts the credit memo.</p>
+  <p class="byline">Built by <a href="../">Eunice Delali Alomatu</a>, drawing on five years of SME and corporate credit work in Ghana.</p>
+</header>
+
+<div class="wrap presets" role="group" aria-label="Example businesses">
+  <span class="lbl">Try an example:</span>
+  <button class="chip" type="button" data-preset="cocoa">Cocoa processor, Kumasi</button>
+  <button class="chip" type="button" data-preset="pharmacy">Pharmacy chain, Accra</button>
+  <button class="chip" type="button" data-preset="logistics">Haulage firm, Tema</button>
+</div>
+
+<main class="wrap desk">
+  <form class="sheet" id="sheet" novalidate>
+    <h2>Term sheet</h2>
+    <p class="hint">All amounts in the same currency, annual figures. Results update as you type.</p>
+
+    <fieldset>
+      <legend>Borrower</legend>
+      <label for="name">Business name
+        <input id="name" type="text" autocomplete="off">
+      </label>
+      <label for="sector">Sector
+        <select id="sector">
+          <option>Agribusiness</option>
+          <option>Healthcare &amp; pharmacy</option>
+          <option>Transport &amp; logistics</option>
+          <option>Manufacturing</option>
+          <option>Retail &amp; trade</option>
+          <option>Services</option>
+        </select>
+      </label>
+      <label for="ccy">Currency
+        <select id="ccy">
+          <option value="USD">US dollar ($)</option>
+          <option value="GHS">Ghana cedi (GH₵)</option>
+        </select>
+      </label>
+    </fieldset>
+
+    <fieldset>
+      <legend>Financials (last full year)</legend>
+      <div class="row2">
+        <label for="rev">Revenue<input id="rev" type="number" inputmode="decimal" min="0"></label>
+        <label for="ebitda">EBITDA<input id="ebitda" type="number" inputmode="decimal"></label>
+      </div>
+      <div class="row2">
+        <label for="debt">Existing debt<input id="debt" type="number" inputmode="decimal" min="0"></label>
+        <label for="ds">Existing debt service / yr<input id="ds" type="number" inputmode="decimal" min="0"></label>
+      </div>
+      <div class="row2">
+        <label for="ca">Current assets<input id="ca" type="number" inputmode="decimal" min="0"></label>
+        <label for="cl">Current liabilities<input id="cl" type="number" inputmode="decimal" min="0"></label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Proposed facility</legend>
+      <div class="row2">
+        <label for="loan">Loan amount<input id="loan" type="number" inputmode="decimal" min="0"></label>
+        <label for="rate">Interest rate %<input id="rate" type="number" inputmode="decimal" min="0" step="0.1"></label>
+      </div>
+      <div class="row2">
+        <label for="tenor">Tenor (years)<input id="tenor" type="number" inputmode="decimal" min="1" step="1"></label>
+        <label for="coll">Collateral value<input id="coll" type="number" inputmode="decimal" min="0"></label>
+      </div>
+    </fieldset>
+  </form>
+
+  <section class="readout" aria-live="polite">
+    <div class="verdict" id="verdict">
+      <div class="grade" id="grade"><span><b id="gradeNum">–</b><small>Risk grade</small></span></div>
+      <div>
+        <span class="pill" id="decision">–</span>
+        <h2 id="headline">–</h2>
+        <p class="why" id="why"></p>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>Ratio ledger <span class="eyebrow">Pro forma, incl. new loan</span></h3>
+      <div class="ledger-scroll">
+        <table class="ledger">
+          <thead><tr><th>Measure</th><th class="v">Result</th><th class="v">Guide</th><th class="v">Read</th></tr></thead>
+          <tbody id="ledger"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>Stress test <span class="eyebrow">Debt service coverage</span></h3>
+      <div class="stress" id="stress"></div>
+    </div>
+
+    <div class="panel" id="condPanel">
+      <h3>Conditions precedent</h3>
+      <ul class="conds" id="conds"></ul>
+    </div>
+
+    <div class="panel">
+      <h3>Credit memo <span class="eyebrow">Analyst draft</span></h3>
+      <div class="memo" id="memo"></div>
+      <div class="ai-row" id="aiRow" hidden>
+        <button class="btn" type="button" id="aiBtn">Write full memo with AI</button>
+        <button class="btn ghost" type="button" id="aiStop" hidden>Stop</button>
+        <span class="ai-note" id="aiNote">Uses your own Claude account.</span>
+      </div>
+      <div class="ai-out" id="aiOut" hidden></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Illustrative model for discussion. Thresholds are typical SME lending guides, not any bank's policy.</span>
+    <span>© Eunice Delali Alomatu</span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var PRESETS = {
+    cocoa:{name:"Ashanti Cocoa Processors Ltd", sector:"Agribusiness", ccy:"USD", rev:4200000, ebitda:780000, debt:900000, ds:260000, ca:1650000, cl:1100000, loan:1500000, rate:14, tenor:5, coll:2100000},
+    pharmacy:{name:"Osu Wellness Pharmacies", sector:"Healthcare & pharmacy", ccy:"GHS", rev:18500000, ebitda:2900000, debt:1600000, ds:500000, ca:7200000, cl:4100000, loan:3500000, rate:24, tenor:5, coll:5400000},
+    logistics:{name:"Tema Gateway Haulage", sector:"Transport & logistics", ccy:"USD", rev:2600000, ebitda:410000, debt:1300000, ds:380000, ca:520000, cl:610000, loan:1200000, rate:16, tenor:5, coll:1050000}
+  };
+  var NUMS = ["rev","ebitda","debt","ds","ca","cl","loan","rate","tenor","coll"];
+  var $ = function(id){ return document.getElementById(id); };
+
+  function load(key){
+    var p = PRESETS[key];
+    $("name").value = p.name; $("sector").value = p.sector; $("ccy").value = p.ccy;
+    NUMS.forEach(function(k){ $(k).value = p[k]; });
+    document.querySelectorAll(".chip").forEach(function(c){ c.setAttribute("aria-pressed", c.dataset.preset === key ? "true" : "false"); });
+    run();
+  }
+
+  function n(id){ var v = parseFloat($(id).value); return isFinite(v) ? v : 0; }
+  function money(v){
+    var sym = $("ccy").value === "GHS" ? "GH₵" : "$";
+    var a = Math.abs(v), s;
+    if (a >= 1e9) s = (a/1e9).toFixed(2) + "B";
+    else if (a >= 1e6) s = (a/1e6).toFixed(2) + "M";
+    else if (a >= 1e3) s = (a/1e3).toFixed(0) + "K";
+    else s = a.toFixed(0);
+    return (v < 0 ? "−" : "") + sym + s;
+  }
+  function x(v){ return isFinite(v) ? v.toFixed(2) + "×" : "n/a"; }
+  function annualPayment(P, ratePct, years){
+    if (P <= 0 || years <= 0) return 0;
+    var r = ratePct/100/12, m = Math.round(years*12);
+    if (r === 0) return P/years;
+    return P * r / (1 - Math.pow(1+r, -m)) * 12;
+  }
+
+  function band(v, cuts){ for (var i=0;i<cuts.length;i++){ if (cuts[i][0](v)) return cuts[i]; } return cuts[cuts.length-1]; }
+
+  function analyze(){
+    var d = {
+      name: $("name").value.trim() || "The borrower", sector: $("sector").value,
+      rev:n("rev"), ebitda:n("ebitda"), debt:n("debt"), ds:n("ds"), ca:n("ca"), cl:n("cl"),
+      loan:n("loan"), rate:n("rate"), tenor:Math.max(1, n("tenor")), coll:n("coll")
+    };
+    d.newDs = annualPayment(d.loan, d.rate, d.tenor);
+    d.totalDs = d.ds + d.newDs;
+    d.dscr = d.totalDs > 0 ? d.ebitda / d.totalDs : Infinity;
+    d.lev = d.ebitda > 0 ? (d.debt + d.loan) / d.ebitda : Infinity;
+    d.cur = d.cl > 0 ? d.ca / d.cl : Infinity;
+    d.cov = d.loan > 0 ? d.coll / d.loan : Infinity;
+    d.margin = d.rev > 0 ? d.ebitda / d.rev : 0;
+
+    var dscrB = band(d.dscr, [[function(v){return v>=1.75},0,"Strong","good"],[function(v){return v>=1.35},1,"Adequate","good"],[function(v){return v>=1.2},2,"Thin","warn"],[function(v){return v>=1.0},4,"Weak","warn"],[function(){return true},7,"Shortfall","bad"]]);
+    var levB  = band(d.lev,  [[function(v){return v<=2},0,"Low","good"],[function(v){return v<=3},1,"Moderate","good"],[function(v){return v<=4},2,"Elevated","warn"],[function(v){return v<=5},4,"High","warn"],[function(){return true},6,"Excessive","bad"]]);
+    var curB  = band(d.cur,  [[function(v){return v>=1.5},0,"Healthy","good"],[function(v){return v>=1.2},1,"Adequate","good"],[function(v){return v>=1.0},2,"Tight","warn"],[function(){return true},4,"Deficit","bad"]]);
+    var covB  = band(d.cov,  [[function(v){return v>=1.5},0,"Well secured","good"],[function(v){return v>=1.2},1,"Secured","good"],[function(v){return v>=1.0},2,"Thin cover","warn"],[function(){return true},3,"Undersecured","bad"]]);
+    d.bands = {dscr:dscrB, lev:levB, cur:curB, cov:covB};
+    var score = dscrB[1] + levB[1] + curB[1] + covB[1];
+    if (d.ebitda <= 0) score = 99;
+    d.grade = score <= 2 ? 1 : score <= 5 ? 2 : score <= 8 ? 3 : score <= 11 ? 4 : score <= 15 ? 5 : 6;
+    if (d.dscr < 1.0 && d.grade < 5) d.grade = 5;
+    d.gradeName = ["","Strong","Good","Satisfactory","Watch","Substandard","Unacceptable"][d.grade];
+    d.decision = d.grade <= 2 ? "Approve" : d.grade <= 4 ? "Approve with conditions" : "Decline";
+    d.tone = d.grade <= 2 ? "good" : d.grade <= 4 ? "warn" : "bad";
+
+    // Stress: EBITDA down 20%; rate up 3 points; both together
+    function sd(eb, rate){ var t = d.ds + annualPayment(d.loan, rate, d.tenor); return t > 0 ? eb/t : Infinity; }
+    d.stress = [
+      {k:"EBITDA −20%", v:sd(d.ebitda*0.8, d.rate)},
+      {k:"Rate +3 pts", v:sd(d.ebitda, d.rate+3)},
+      {k:"Both at once", v:sd(d.ebitda*0.8, d.rate+3)}
+    ];
+
+    var c = [];
+    if (dscrB[3] !== "good") c.push("Cash sweep of 25% of excess cash flow until DSCR holds above 1.35× for two consecutive quarters.");
+    if (d.stress[2].v < 1.0) c.push("Debt service reserve account funded with six months of repayments before first drawdown.");
+    if (levB[3] !== "good") c.push("Leverage covenant: total debt to EBITDA no higher than " + Math.max(3, Math.ceil(d.lev)) + ".0×, tested semi-annually.");
+    if (curB[3] !== "good") c.push("Working capital covenant: current ratio of at least 1.2×; no dividends while below.");
+    if (covB[3] !== "good") c.push("Additional security to lift collateral cover to 1.2×, such as a debenture over receivables or a personal guarantee.");
+    if (d.rate >= 20) c.push("Consider a partial credit guarantee (for example an IFC or Ghana Incentive-Based Risk-Sharing System cover) to price below " + d.rate + "%.");
+    c.push("Quarterly management accounts within 45 days of quarter end; audited financials within 120 days of year end.");
+    d.conds = c;
+    return d;
+  }
+
+  function flag(b){ return '<span class="flag bg-' + b[3] + '">' + b[2] + '</span>'; }
+
+  function render(d){
+    var g = $("grade"); g.className = "grade tone-" + d.tone;
+    $("gradeNum").textContent = d.grade;
+    var p = $("decision"); p.className = "pill bg-" + d.tone; p.textContent = d.decision;
+    $("headline").textContent = d.gradeName + " credit";
+    var weakest = Object.keys(d.bands).map(function(k){ return [k, d.bands[k]]; }).sort(function(a,b){ return b[1][1]-a[1][1]; })[0];
+    var label = {dscr:"debt service coverage", lev:"leverage", cur:"liquidity", cov:"collateral cover"};
+    $("why").textContent = d.ebitda <= 0
+      ? "Negative or zero EBITDA leaves no capacity to service new debt."
+      : (weakest[1][1] === 0 ? "All four measures sit inside typical lending guides." : "The binding constraint is " + label[weakest[0]] + ", rated " + weakest[1][2].toLowerCase() + ".");
+
+    $("ledger").innerHTML = [
+      ["Debt service coverage (DSCR)", "EBITDA ÷ total annual debt service of " + money(d.totalDs), x(d.dscr), "≥ 1.35×", d.bands.dscr],
+      ["Leverage", "Total debt incl. new loan ÷ EBITDA", x(d.lev), "≤ 3.0×", d.bands.lev],
+      ["Current ratio", "Current assets ÷ current liabilities", x(d.cur), "≥ 1.2×", d.bands.cur],
+      ["Collateral cover", "Collateral value ÷ loan amount", x(d.cov), "≥ 1.2×", d.bands.cov],
+      ["EBITDA margin", "EBITDA ÷ revenue", (d.margin*100).toFixed(1) + "%", "context", null],
+      ["New annual repayment", d.tenor + "-yr amortizing at " + d.rate + "%", money(d.newDs), "", null]
+    ].map(function(r){
+      return '<tr><td><span class="what">' + r[0] + '</span><span class="def">' + r[1] + '</span></td>' +
+        '<td class="v num">' + r[2] + '</td><td class="v num" style="color:var(--muted)">' + r[3] + '</td>' +
+        '<td class="v">' + (r[4] ? flag(r[4]) : '') + '</td></tr>';
+    }).join("");
+
+    $("stress").innerHTML = d.stress.map(function(s){
+      var tone = s.v >= 1.2 ? "good" : s.v >= 1.0 ? "warn" : "bad";
+      var w = isFinite(s.v) ? Math.max(4, Math.min(100, s.v/2*100)) : 100;
+      var note = s.v >= 1.2 ? "Still repays" : s.v >= 1.0 ? "Just covers" : "Cannot repay";
+      return '<div class="case"><span class="k">' + s.k + '</span><span class="d num tone-' + tone + '">' + x(s.v) + '</span>' +
+        '<span class="k">' + note + '</span><div class="bar"><i style="width:' + w + '%;background:var(--' + tone + ')"></i></div></div>';
+    }).join("");
+
+    $("condPanel").hidden = d.decision === "Decline";
+    $("conds").innerHTML = d.conds.map(function(t){ return "<li>" + esc(t) + "</li>"; }).join("");
+
+    $("memo").innerHTML = memo(d).map(function(t){ return "<p>" + t + "</p>"; }).join("") ;
+    lastData = d;
+  }
+
+  function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
+
+  function memo(d){
+    var nm = "<strong>" + esc(d.name) + "</strong>";
+    var out = [];
+    out.push('<span class="tag">REQUEST</span><br>' + nm + " (" + esc(d.sector) + ") requests a " + money(d.loan) + " term loan over " + d.tenor + " years at " + d.rate + "%, adding " + money(d.newDs) + " in annual repayments to existing service of " + money(d.ds) + ".");
+    out.push('<span class="tag">CAPACITY</span><br>' + "EBITDA of " + money(d.ebitda) + " on revenue of " + money(d.rev) + " (" + (d.margin*100).toFixed(1) + "% margin) covers total debt service " + x(d.dscr) + ". " +
+      (d.stress[2].v >= 1.0 ? "Coverage holds above 1.0× even with EBITDA down 20% and rates up three points (" + x(d.stress[2].v) + ")." : "Under a combined 20% EBITDA decline and three-point rate rise, coverage falls to " + x(d.stress[2].v) + ", below break-even."));
+    out.push('<span class="tag">STRUCTURE</span><br>' + "Pro forma leverage is " + x(d.lev) + " EBITDA, liquidity " + x(d.cur) + " on the current ratio, and collateral of " + money(d.coll) + " covers the facility " + x(d.cov) + ".");
+    out.push('<span class="tag">RECOMMENDATION</span><br>Internal grade ' + d.grade + " (" + d.gradeName.toLowerCase() + "). " +
+      (d.decision === "Approve" ? "Recommend approval on standard terms." : d.decision === "Decline" ? "Recommend decline in current form; a smaller facility, longer tenor or additional equity could make the request bankable." : "Recommend approval subject to the conditions listed above."));
+    return out;
+  }
+
+  var lastData = null;
+  document.querySelectorAll(".chip").forEach(function(c){ c.addEventListener("click", function(){ load(c.dataset.preset); }); });
+  $("sheet").addEventListener("input", function(){
+    document.querySelectorAll(".chip").forEach(function(c){ c.setAttribute("aria-pressed","false"); });
+    run();
+  });
+  $("sheet").addEventListener("submit", function(e){ e.preventDefault(); });
+  function run(){ render(analyze()); $("aiOut").hidden = true; }
+
+  load("cocoa");
+
+  // Optional AI memo, only for viewers whose Claude account allows it
+  (async function(){
+    if (!window.claude || !claude.use) return;
+    var sample = null;
+    try { sample = await claude.use("sample"); } catch(e){}
+    if (!sample) return;
+    $("aiRow").hidden = false;
+    var ctl = null;
+    $("aiStop").addEventListener("click", function(){ if (ctl) ctl.abort(); });
+    $("aiBtn").addEventListener("click", async function(){
+      var d = lastData; if (!d) return;
+      var facts = [
+        "Borrower: " + d.name + " (" + d.sector + ")",
+        "Revenue " + money(d.rev) + ", EBITDA " + money(d.ebitda) + " (" + (d.margin*100).toFixed(1) + "% margin)",
+        "Existing debt " + money(d.debt) + ", existing annual debt service " + money(d.ds),
+        "Proposed loan " + money(d.loan) + ", " + d.tenor + " years, " + d.rate + "%, new annual repayment " + money(d.newDs),
+        "DSCR " + x(d.dscr) + ", leverage " + x(d.lev) + ", current ratio " + x(d.cur) + ", collateral cover " + x(d.cov),
+        "Stressed DSCR: EBITDA -20% " + x(d.stress[0].v) + ", rate +3pts " + x(d.stress[1].v) + ", both " + x(d.stress[2].v),
+        "Internal grade " + d.grade + " of 6 (" + d.gradeName + "), model recommendation: " + d.decision,
+        "Proposed conditions: " + d.conds.join(" | ")
+      ].join("\n");
+      var prompt = "You are a senior credit analyst at a commercial bank in West Africa. Write a concise credit committee memo (about 250 words) for the facility below. " +
+        "Use these plain-text section headings on their own lines: Summary, Key strengths, Key risks and mitigants, Recommendation. " +
+        "Use only the figures given; do not invent numbers. Mention one sector-specific risk relevant to " + d.sector + " in Ghana. No markdown symbols.\n\n" + facts;
+      ctl = new AbortController();
+      $("aiBtn").disabled = true; $("aiStop").hidden = false;
+      $("aiOut").hidden = false; $("aiOut").textContent = "Thinking...";
+      $("aiNote").textContent = "Writing the memo...";
+      try {
+        await sample(prompt, { signal: ctl.signal, onText: function(u){ $("aiOut").textContent = u.text; } });
+        $("aiNote").textContent = "AI draft. Check figures against the ledger.";
+      } catch(e){
+        $("aiOut").textContent = (e && e.text) || "";
+        if (!(e && e.text)) $("aiOut").hidden = true;
+        var code = e && e.code;
+        if (code === "cancelled") $("aiNote").textContent = "Stopped.";
+        else if (code === "not_granted" || code === "sampling_disabled" || code === "capability_disabled" || code === "not_declared" || code === "capability_removed") { $("aiRow").hidden = true; }
+        else if (code === "rate_limited") $("aiNote").textContent = "Too many requests right now. Try again in a minute.";
+        else $("aiNote").textContent = "The AI memo didn't finish. Try again.";
+      } finally {
+        $("aiBtn").disabled = false; $("aiStop").hidden = true;
+      }
+    });
+  })();
+})();
+</script>
+
+</body></html>

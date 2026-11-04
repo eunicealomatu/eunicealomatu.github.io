@@ -1,0 +1,556 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Pharmacy Orders</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&display=swap">
+<script>
+/* ============================================================
+   SHOP SETTINGS — edit these lines (see SETUP guide)
+   ============================================================ */
+window.SHOP = {
+  name: "Your Pharmacy",                 // shop name shown at the top
+  area: "Accra",                         // town / area (optional)
+  shopPhone: "",                         // shop phone, e.g. "024 123 4567" (optional)
+  momoNumber: "024 000 0000",            // MoMo number customers pay to
+  momoName: "Name registered on MoMo",   // name customers will see when sending
+  firebase: null                         // paste the Firebase config object here (step 4 of the guide)
+};
+</script>
+<style>
+/* Layout: one narrow column (phone-first). Customer side and pharmacy side share the same tokens. */
+:root{
+  --bg:#f3f6f4; --surface:#ffffff; --ink:#14231c; --muted:#5d6b64; --line:#d9e2dd;
+  --brand:#0f5a3c; --brand-ink:#ffffff; --gold:#c98a12; --gold-soft:#fbf1dc;
+  --ok:#14804a; --ok-soft:#e1f3e8; --no:#b4322b; --no-soft:#fbe6e4; --wait:#8a6a12; --wait-soft:#f8efd6;
+  --display:"Bricolage Grotesque", "Arial Rounded MT Bold", system-ui, sans-serif;
+  --body:"Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --r:12px;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0e1512; --surface:#16211c; --ink:#e7efea; --muted:#9aaba2; --line:#2a3a33;
+  --brand:#3fbf86; --brand-ink:#06140e; --gold:#e8b44a; --gold-soft:#2d2513;
+  --ok:#5fd394; --ok-soft:#163223; --no:#ff8a80; --no-soft:#3a1b19; --wait:#e8c36a; --wait-soft:#2f2814; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#0e1512; --surface:#16211c; --ink:#e7efea; --muted:#9aaba2; --line:#2a3a33;
+  --brand:#3fbf86; --brand-ink:#06140e; --gold:#e8b44a; --gold-soft:#2d2513;
+  --ok:#5fd394; --ok-soft:#163223; --no:#ff8a80; --no-soft:#3a1b19; --wait:#e8c36a; --wait-soft:#2f2814; color-scheme:dark }
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font:16px/1.5 var(--body);margin:0}
+.wrap{max-width:560px;margin:0 auto;padding-inline:16px;padding-block:0 48px}
+h1,h2,h3{font-family:var(--display);line-height:1.15;text-wrap:balance;margin:0}
+h1{font-size:1.6rem;font-weight:800}
+h2{font-size:1.25rem;font-weight:800}
+h3{font-size:1.05rem;font-weight:600}
+p{margin:0}
+.muted{color:var(--muted)}
+.small{font-size:.875rem}
+button,input,textarea,select{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+
+/* demo bar */
+.demobar{background:var(--gold-soft);border-bottom:1px solid var(--line);padding:10px 16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:center;font-size:.875rem}
+.seg{display:inline-flex;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:3px}
+.seg button{border:0;background:none;padding:6px 14px;border-radius:999px;cursor:pointer;font-weight:700}
+.seg button[aria-pressed="true"]{background:var(--brand);color:var(--brand-ink)}
+
+/* header */
+.top{background:var(--brand);color:var(--brand-ink);padding-block:22px 26px}
+.top .wrap{padding-block:0;display:flex;gap:12px 14px;align-items:center;flex-wrap:wrap}
+.top .ttl{flex:1 1 180px;min-width:0}
+.rx{flex:none;width:46px;height:46px;border-radius:12px;background:var(--brand-ink);color:var(--brand);display:grid;place-items:center;font:800 1.35rem var(--display)}
+.top p{opacity:.85;font-size:.9rem}
+.top-actions{margin-left:auto;display:flex;gap:8px}
+.top-actions button{background:transparent;border:1.5px solid currentColor;color:inherit;border-radius:999px;padding:6px 12px;font-size:.85rem;font-weight:700;cursor:pointer}
+
+/* blocks */
+.stack{display:flex;flex-direction:column;gap:14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px}
+main.wrap{margin-top:-12px}
+label.f{display:flex;flex-direction:column;gap:6px;font-weight:700;font-size:.95rem}
+label.f span.hint{font-weight:400;color:var(--muted);font-size:.85rem}
+input[type=text],input[type=tel],input[type=number],textarea{width:100%;border:1.5px solid var(--line);background:var(--bg);border-radius:10px;padding:11px 12px;min-width:0}
+input:focus,textarea:focus{border-color:var(--brand);outline:none}
+textarea{min-height:70px;resize:vertical}
+.row{display:flex;gap:8px;align-items:center}
+.row > .grow{flex:1;min-width:0}
+.qty{width:74px!important;flex:none;text-align:center}
+.x{flex:none;width:40px;height:44px;border:0;background:none;color:var(--muted);font-size:1.4rem;cursor:pointer;border-radius:10px}
+.btn{border:0;border-radius:12px;padding:13px 18px;font-weight:700;cursor:pointer;background:var(--brand);color:var(--brand-ink);font-size:1rem}
+.btn.full{width:100%}
+.btn.ghost{background:transparent;color:var(--brand);border:1.5px solid var(--line)}
+.btn.small{padding:8px 12px;font-size:.9rem;border-radius:10px}
+.btn:disabled{opacity:.5;cursor:default}
+.link{background:none;border:0;color:var(--brand);font-weight:700;cursor:pointer;padding:6px 0}
+
+.choice{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.choice label{border:1.5px solid var(--line);border-radius:12px;padding:12px;cursor:pointer;display:flex;flex-direction:column;gap:2px;background:var(--bg)}
+.choice input{position:absolute;opacity:0;pointer-events:none}
+.choice label:has(input:checked){border-color:var(--brand);background:var(--surface);box-shadow:inset 0 0 0 1px var(--brand)}
+.choice b{font-size:.98rem}
+.choice small{color:var(--muted)}
+
+.photo{display:flex;gap:12px;align-items:center}
+.photo img{width:64px;height:64px;object-fit:cover;border-radius:10px;border:1px solid var(--line)}
+.filebtn{position:relative;overflow:hidden}
+.filebtn input{position:absolute;inset:0;opacity:0;cursor:pointer}
+
+/* status */
+.status{border-radius:var(--r);padding:18px;display:flex;flex-direction:column;gap:6px}
+.status h2{font-size:1.5rem}
+.st-wait{background:var(--wait-soft);color:var(--wait)}
+.st-ok{background:var(--ok-soft);color:var(--ok)}
+.st-mix{background:var(--gold-soft);color:var(--wait)}
+.st-no{background:var(--no-soft);color:var(--no)}
+.st-done{background:var(--surface);color:var(--muted);border:1px solid var(--line)}
+.status p{color:var(--ink)}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:currentColor;margin-right:8px;vertical-align:1px}
+.pulse{animation:pulse 1.6s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.25}}
+@media (prefers-reduced-motion: reduce){.pulse{animation:none}}
+
+.items{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.items li{display:flex;gap:10px;align-items:center;padding:11px 0;border-top:1px solid var(--line)}
+.items li:first-child{border-top:0}
+.items .nm{flex:1;min-width:0;overflow-wrap:anywhere}
+.items .q{color:var(--muted);font-variant-numeric:tabular-nums;font-size:.9rem}
+.chip{flex:none;font-size:.78rem;font-weight:700;letter-spacing:.03em;text-transform:uppercase;padding:4px 9px;border-radius:999px}
+.chip.wait{background:var(--wait-soft);color:var(--wait)}
+.chip.ok{background:var(--ok-soft);color:var(--ok)}
+.chip.no{background:var(--no-soft);color:var(--no)}
+.chip.info{background:var(--bg);color:var(--muted);border:1px solid var(--line)}
+.kv{display:flex;justify-content:space-between;gap:12px;align-items:baseline}
+.amount{font:800 1.6rem var(--display);font-variant-numeric:tabular-nums}
+.momo{background:var(--gold-soft);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:8px}
+.momo .num{font:800 1.35rem var(--display);letter-spacing:.02em;user-select:all}
+.note{border-left:3px solid var(--gold);padding-left:10px}
+
+/* pharmacy */
+.tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px}
+.tabs button{flex:none;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:8px 14px;font-weight:700;cursor:pointer}
+.tabs button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tabs .n{font-variant-numeric:tabular-nums;opacity:.75;margin-left:4px}
+.ord{display:flex;flex-direction:column;gap:12px}
+.ord.fresh{box-shadow:0 0 0 2px var(--gold)}
+.ord-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.ord-head h3{overflow-wrap:anywhere}
+.tags{display:flex;gap:6px;flex-wrap:wrap}
+.ibtns{display:flex;gap:6px;flex:none}
+.ibtns button{border:1.5px solid var(--line);background:var(--bg);border-radius:10px;padding:8px 10px;font-weight:700;font-size:.85rem;cursor:pointer}
+.ibtns button.on-ok{background:var(--ok);border-color:var(--ok);color:var(--surface)}
+.ibtns button.on-no{background:var(--no);border-color:var(--no);color:var(--surface)}
+.rxthumb{width:100%;max-height:220px;object-fit:contain;background:var(--bg);border-radius:10px;border:1px solid var(--line);cursor:zoom-in}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.paid-alert{background:var(--gold-soft);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:8px}
+.empty{text-align:center;padding:28px 16px;color:var(--muted)}
+
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:12px;font-weight:700;max-width:calc(100% - 32px);z-index:20;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:grid;place-items:center;padding:16px;z-index:30}
+.modal .card{max-width:420px;width:100%;max-height:90%;overflow:auto}
+.modal img{width:100%;border-radius:8px}
+#qrbox{display:grid;place-items:center;padding:12px;background:#fff;border-radius:10px}
+.copyrow{display:flex;gap:8px;align-items:center}
+.copyrow code{flex:1;min-width:0;overflow-wrap:anywhere;font-size:.85rem;background:var(--bg);padding:8px;border-radius:8px}
+.mine a{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-top:1px solid var(--line);color:inherit;text-decoration:none;align-items:center}
+.mine a:first-of-type{border-top:0}
+</style>
+
+<div id="demobar" class="demobar" hidden>
+  <span><b>Demo</b> · orders stay on this device</span>
+  <div class="seg" role="group" aria-label="Switch view">
+    <button id="seg-c" type="button" aria-pressed="true">Customer</button>
+    <button id="seg-a" type="button" aria-pressed="false">Pharmacy</button>
+  </div>
+</div>
+
+<header class="top">
+  <div class="wrap">
+    <div class="rx" aria-hidden="true">℞</div>
+    <div class="ttl">
+      <h1 id="shopname">Pharmacy</h1>
+      <p id="shopsub">Order ahead · we tell you if it's in stock</p>
+    </div>
+    <div class="top-actions" id="topactions"></div>
+  </div>
+</header>
+
+<main class="wrap" id="app"></main>
+<div id="toast" class="toast" role="status" hidden></div>
+<div id="modal" class="modal" hidden></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script type="module">
+const S = window.SHOP;
+const $ = (s, r = document) => r.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const app = $("#app");
+const DEMO = !S.firebase;
+const cedi = v => { const n = Number(String(v).replace(/[^\d.]/g, "")); return isFinite(n) && n > 0 ? "GH₵ " + n.toFixed(2) : null; };
+const ago = t => { const m = Math.round((Date.now() - t) / 60000); if (m < 1) return "just now"; if (m < 60) return m + " min ago"; const h = Math.round(m / 60); if (h < 24) return h + " h ago"; return new Date(t).toLocaleDateString(); };
+
+$("#shopname").textContent = S.name;
+$("#shopsub").textContent = [S.area, "Order ahead · we tell you if it's in stock"].filter(Boolean).join(" · ");
+document.title = S.name + " · Orders";
+
+/* ---------------- storage ---------------- */
+function safeGet(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch { return d; } }
+function safeSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
+
+function demoStore() {
+  let mem = safeGet("rx_demo_orders", null);
+  if (!mem) {
+    const now = Date.now();
+    mem = {
+      ex1: { name: "Ama (example)", phone: "024 555 0101", items: [{ name: "Paracetamol 500mg", qty: "2 packs", status: "waiting" }, { name: "Amoxicillin 500mg", qty: "1", status: "waiting" }], note: "", rx: null, pay: "momo", stage: "open", total: "", shopNote: "", momoRef: "", createdAt: now - 6 * 60000, updatedAt: now - 6 * 60000 },
+      ex2: { name: "Kwame (example)", phone: "020 555 0199", items: [{ name: "Coartem", qty: "1", status: "ready" }, { name: "ORS sachets", qty: "5", status: "unavailable" }], note: "For my son", rx: null, pay: "pickup", stage: "open", total: "45", shopNote: "ORS out until Friday", momoRef: "", createdAt: now - 50 * 60000, updatedAt: now - 30 * 60000 }
+    };
+    safeSet("rx_demo_orders", mem);
+  }
+  const subs = new Set();
+  const emit = () => { safeSet("rx_demo_orders", mem); subs.forEach(f => f()); };
+  window.addEventListener("storage", e => { if (e.key === "rx_demo_orders") { mem = safeGet("rx_demo_orders", mem); subs.forEach(f => f()); } });
+  const watch = f => { subs.add(f); f(); return () => subs.delete(f); };
+  return {
+    async create(o) { const id = "d" + Math.random().toString(36).slice(2, 10); mem[id] = o; emit(); return id; },
+    watchOne(id, cb) { return watch(() => cb(mem[id] ? { id, ...structuredClone(mem[id]) } : null)); },
+    watchAll(cb) { return watch(() => cb(Object.entries(mem).map(([id, o]) => ({ id, ...structuredClone(o) })))); },
+    async update(id, patch) { if (mem[id]) { mem[id] = { ...mem[id], ...patch, updatedAt: Date.now() }; emit(); } },
+    async customerPay(id, ref) { return this.update(id, { momoRef: ref }); },
+    onAuth(cb) { cb({ email: "demo" }); return () => {}; }, async signIn() {}, async signOut() {}
+  };
+}
+
+async function fireStore() {
+  const V = "10.12.2", B = `https://www.gstatic.com/firebasejs/${V}/`;
+  const { initializeApp } = await import(B + "firebase-app.js");
+  const F = await import(B + "firebase-firestore.js");
+  const A = await import(B + "firebase-auth.js");
+  const fb = initializeApp(S.firebase);
+  const db = F.getFirestore(fb), auth = A.getAuth(fb);
+  const col = F.collection(db, "orders");
+  return {
+    async create(o) { return (await F.addDoc(col, o)).id; },
+    watchOne(id, cb) { return F.onSnapshot(F.doc(db, "orders", id), s => cb(s.exists() ? { id: s.id, ...s.data() } : null), () => cb(null)); },
+    watchAll(cb, err) { return F.onSnapshot(F.query(col, F.orderBy("createdAt", "desc"), F.limit(150)), s => cb(s.docs.map(d => ({ id: d.id, ...d.data() }))), err); },
+    async update(id, patch) { await F.updateDoc(F.doc(db, "orders", id), { ...patch, updatedAt: Date.now() }); },
+    async customerPay(id, ref) { await F.updateDoc(F.doc(db, "orders", id), { momoRef: ref, updatedAt: Date.now() }); },
+    onAuth(cb) { return A.onAuthStateChanged(auth, cb); },
+    signIn(e, p) { return A.signInWithEmailAndPassword(auth, e, p); },
+    signOut() { return A.signOut(auth); }
+  };
+}
+
+/* ---------------- shared UI bits ---------------- */
+let toastT;
+function toast(msg) { const t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => t.hidden = true, 3800); }
+function modal(html) { const m = $("#modal"); m.innerHTML = `<div class="card stack">${html}<button class="btn ghost" data-close>Close</button></div>`; m.hidden = false; }
+$("#modal").addEventListener("click", e => { if (e.target.id === "modal" || e.target.closest("[data-close]")) $("#modal").hidden = true; });
+async function copy(text, btn) {
+  try { await navigator.clipboard.writeText(text); toast("Copied"); }
+  catch { const c = btn?.parentElement?.querySelector("code"); if (c) { const r = document.createRange(); r.selectNodeContents(c); const s = getSelection(); s.removeAllRanges(); s.addRange(r); } toast("Press and hold to copy"); }
+}
+let audioCtx = null;
+function beep() { if (!audioCtx) return; const o = audioCtx.createOscillator(), g = audioCtx.createGain(); o.frequency.value = 880; o.connect(g); g.connect(audioCtx.destination); g.gain.setValueAtTime(.25, audioCtx.currentTime); g.gain.exponentialRampToValueAtTime(.001, audioCtx.currentTime + .5); o.start(); o.stop(audioCtx.currentTime + .5); }
+function sysNotify(title, body) { try { if ("Notification" in window && Notification.permission === "granted") new Notification(title, { body }); } catch {} try { navigator.vibrate?.([200, 100, 200]); } catch {} }
+
+function summarize(o) {
+  const it = o.items || [];
+  const ready = it.filter(i => i.status === "ready").length, no = it.filter(i => i.status === "unavailable").length, wait = it.length - ready - no;
+  if (o.stage === "cancelled") return { k: "done", t: "Order closed", d: o.shopNote || "The pharmacy closed this order." };
+  if (o.stage === "collected") return { k: "done", t: "Collected", d: "Thank you. Get well soon." };
+  if (wait === it.length) return { k: "wait", t: "Checking stock", d: "The pharmacy has your order. This page updates by itself." };
+  if (wait > 0) return { k: "wait", t: "Still checking some items", d: `${ready} ready, ${no} not available, ${wait} being checked.` };
+  if (no === 0) return { k: "ok", t: o.stage === "paid" ? "Paid · ready for pickup" : "Ready for pickup", d: "Everything you asked for is set aside for you." };
+  if (ready === 0) return { k: "no", t: "Not available right now", d: "Sorry, none of these are in stock. No need to make the trip." };
+  return { k: "mix", t: o.stage === "paid" ? "Paid · ready for pickup" : "Some items ready", d: `${ready} ready, ${no} not in stock. See the list below.` };
+}
+const chip = s => s === "ready" ? `<span class="chip ok">Ready</span>` : s === "unavailable" ? `<span class="chip no">None</span>` : `<span class="chip wait">Checking</span>`;
+
+/* ---------------- customer side ---------------- */
+let unsub = null, authUnsub = null;
+const myOrders = () => safeGet("rx_my_orders", []);
+
+function customerHome(store) {
+  $("#shopsub").textContent = [S.area, "Order ahead · we tell you if it's in stock"].filter(Boolean).join(" · ");
+  unsub?.(); unsub = null; authUnsub?.(); authUnsub = null; app.onclick = null;
+  $("#topactions").innerHTML = "";
+  const mine = myOrders();
+  app.innerHTML = `
+  <div class="stack">
+    ${mine.length ? `<section class="card mine"><h3 style="margin-bottom:6px">Your orders</h3>${mine.slice(0, 5).map(m => `<a href="#order-${esc(m.id)}"><span>${esc(m.label)}<br><span class="small muted">${ago(m.at)}</span></span><span class="chip info">Open</span></a>`).join("")}</section>` : ""}
+    <form id="f" class="card stack" novalidate>
+      <h2>What do you need?</h2>
+      <div class="stack" id="items"></div>
+      <button type="button" class="link" id="add" style="align-self:flex-start">+ Add another medicine</button>
+      <label class="f">Your name<input id="nm" type="text" autocomplete="name" required></label>
+      <label class="f">Phone number<span class="hint">So the pharmacy can call you if needed</span><input id="ph" type="tel" autocomplete="tel" inputmode="tel" required></label>
+      <div class="f" style="display:flex;flex-direction:column;gap:6px;font-weight:700">Prescription photo <span class="hint" style="font-weight:400;color:var(--muted);font-size:.85rem">Optional. Needed for some medicines.</span>
+        <div class="photo"><img id="rxprev" alt="" hidden><span class="btn ghost small filebtn">Add photo<input id="rx" type="file" accept="image/*" aria-label="Add prescription photo"></span><button type="button" class="link" id="rxdel" hidden>Remove</button></div>
+      </div>
+      <label class="f">Note for the pharmacist<span class="hint">Optional, e.g. brand you prefer, child's age</span><textarea id="nt"></textarea></label>
+      <fieldset style="border:0;padding:0;margin:0" class="stack"><legend style="font-weight:700;margin-bottom:6px">How will you pay?</legend>
+        <div class="choice">
+          <label><input type="radio" name="pay" value="momo" checked><b>Mobile Money</b><small>Pay after we confirm stock</small></label>
+          <label><input type="radio" name="pay" value="pickup"><b>At pickup</b><small>Cash or MoMo at the counter</small></label>
+        </div>
+      </fieldset>
+      <p id="err" class="small" style="color:var(--no)" hidden></p>
+      <button class="btn full" id="send">Send order</button>
+      <p class="small muted">You don't pay anything yet. We'll check stock first and tell you on the next screen.</p>
+    </form>
+  </div>`;
+  const itemsEl = $("#items");
+  const addItem = (v = "") => {
+    const n = itemsEl.children.length;
+    const row = document.createElement("div"); row.className = "row";
+    row.innerHTML = `<input class="grow" type="text" id="it-${n}" placeholder="${n ? "Another medicine" : "Medicine name, e.g. Paracetamol"}" aria-label="Medicine name" value="${esc(v)}"><input class="qty" type="text" id="iq-${n}" placeholder="Qty" aria-label="Quantity" value="1"><button type="button" class="x" aria-label="Remove">×</button>`;
+    row.querySelector(".x").onclick = () => { if (itemsEl.children.length > 1) row.remove(); else row.querySelector("input").value = ""; };
+    itemsEl.append(row);
+    return row;
+  };
+  addItem();
+  $("#add").onclick = () => addItem().querySelector("input").focus();
+
+  let rxData = null;
+  $("#rx").onchange = async e => {
+    const f = e.target.files[0]; if (!f) return;
+    try { rxData = await shrink(f); $("#rxprev").src = rxData; $("#rxprev").hidden = false; $("#rxdel").hidden = false; }
+    catch { toast("Couldn't read that photo. Try another."); }
+  };
+  $("#rxdel").onclick = () => { rxData = null; $("#rxprev").hidden = true; $("#rxdel").hidden = true; $("#rx").value = ""; };
+
+  $("#f").onsubmit = async e => {
+    e.preventDefault();
+    const items = [...itemsEl.children].map(r => ({ name: r.querySelector(".grow").value.trim(), qty: r.querySelector(".qty").value.trim() || "1", status: "waiting" })).filter(i => i.name);
+    const name = $("#nm").value.trim(), phone = $("#ph").value.trim();
+    const err = $("#err");
+    const problem = !items.length ? "Add at least one medicine." : !name ? "Add your name." : phone.replace(/\D/g, "").length < 9 ? "Add a phone number we can reach you on." : "";
+    if (problem) { err.textContent = problem; err.hidden = false; return; }
+    err.hidden = true;
+    const btn = $("#send"); btn.disabled = true; btn.textContent = "Sending…";
+    try {
+      const now = Date.now();
+      const id = await store.create({ name: name.slice(0, 79), phone: phone.slice(0, 30), items: items.slice(0, 20), note: $("#nt").value.trim().slice(0, 500), rx: rxData, pay: document.querySelector("input[name=pay]:checked").value, stage: "open", total: "", shopNote: "", momoRef: "", createdAt: now, updatedAt: now });
+      const list = myOrders(); list.unshift({ id, label: items.map(i => i.name).join(", ").slice(0, 60), at: now }); safeSet("rx_my_orders", list.slice(0, 20));
+      go("order-" + id);
+    } catch (ex) { console.error(ex); err.textContent = "The order didn't go through. Check your internet and try again."; err.hidden = false; btn.disabled = false; btn.textContent = "Send order"; }
+  };
+}
+
+function shrink(file) {
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload = () => { const img = new Image(); img.onload = () => {
+      const max = 1100, k = Math.min(1, max / Math.max(img.width, img.height));
+      const c = document.createElement("canvas"); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+      c.getContext("2d").drawImage(img, 0, 0, c.width, c.height); res(c.toDataURL("image/jpeg", .6));
+    }; img.onerror = rej; img.src = r.result; };
+    r.onerror = rej; r.readAsDataURL(file);
+  });
+}
+
+function customerOrder(store, id) {
+  $("#shopsub").textContent = [S.area, "Order ahead · we tell you if it's in stock"].filter(Boolean).join(" · ");
+  unsub?.(); authUnsub?.(); authUnsub = null; app.onclick = null;
+  $("#topactions").innerHTML = `<button type="button" id="newo">New order</button>`;
+  $("#newo").onclick = () => go("");
+  app.innerHTML = `<div class="card empty">Loading your order…</div>`;
+  let last = null;
+  unsub = store.watchOne(id, o => {
+    if (!o) { app.innerHTML = `<div class="card empty stack"><p>We couldn't find this order. Check the link, or send a new one.</p><button class="btn" onclick="location.hash=''">New order</button></div>`; return; }
+    const s = summarize(o);
+    const sig = s.t + "|" + (o.items || []).map(i => i.status).join() + "|" + o.total + "|" + o.stage;
+    if (last && last !== sig) { toast(s.t); sysNotify(S.name + ": " + s.t, s.d); flashTitle(s.t); }
+    last = sig;
+    const anyReady = (o.items || []).some(i => i.status === "ready");
+    const total = cedi(o.total);
+    const link = location.href;
+    const showPay = o.pay === "momo" && anyReady && total && o.stage === "open";
+    app.innerHTML = `<div class="stack">
+      <section class="status st-${s.k}" aria-live="polite">
+        <span class="small" style="font-weight:700;text-transform:uppercase;letter-spacing:.06em">${s.k === "wait" ? `<span class="dot pulse"></span>` : `<span class="dot"></span>`}Order for ${esc(o.name)}</span>
+        <h2>${esc(s.t)}</h2><p>${esc(s.d)}</p>
+      </section>
+      <section class="card stack">
+        <h3>Your medicines</h3>
+        <ul class="items">${(o.items || []).map(i => `<li><span class="nm">${esc(i.name)} <span class="q">× ${esc(i.qty)}</span></span>${chip(i.status)}</li>`).join("")}</ul>
+        ${o.shopNote ? `<p class="note"><b>From the pharmacy:</b> ${esc(o.shopNote)}</p>` : ""}
+        ${total ? `<div class="kv"><span class="muted">Total to pay</span><span class="amount">${total}</span></div>` : ""}
+        <p class="small muted">Payment: ${o.pay === "momo" ? "Mobile Money" : "At pickup"}${o.stage === "paid" ? " · <b style='color:var(--ok)'>payment confirmed</b>" : ""}</p>
+      </section>
+      ${showPay ? `<section class="momo">
+        <h3>Pay with MoMo</h3>
+        <p>Send <b>${total}</b> to:</p>
+        <span class="num">${esc(S.momoNumber)}</span>
+        <p class="small">Name: <b>${esc(S.momoName)}</b></p>
+        ${o.momoRef ? `<p><b>Thanks.</b> You sent transaction ID <b>${esc(o.momoRef)}</b>. The pharmacy will confirm it.</p><button class="link" id="chg" style="align-self:flex-start">Change transaction ID</button>` : ""}
+        <form id="payf" class="stack" ${o.momoRef ? "hidden" : ""}>
+          <label class="f">After paying, enter the Transaction ID from your MoMo SMS<input id="ref" type="text" inputmode="numeric" maxlength="38" placeholder="e.g. 52183746291"></label>
+          <button class="btn">I've paid</button>
+        </form>
+      </section>` : ""}
+      ${o.pay === "momo" && anyReady && !total && o.stage === "open" ? `<p class="card small">The pharmacy will add the price here shortly. Then you can pay by MoMo.</p>` : ""}
+      <section class="card stack">
+        <h3>Keep this page</h3>
+        <p class="small muted">It updates by itself when the pharmacy replies. Save the link to come back later.</p>
+        <div class="copyrow"><code>${esc(link)}</code><button class="btn small ghost" id="cp">Copy</button></div>
+        ${"Notification" in window && Notification.permission === "default" ? `<button class="btn ghost small" id="notif" style="align-self:flex-start">Alert me on this phone</button>` : ""}
+        ${S.shopPhone ? `<p class="small">Questions? Call <b style="user-select:all">${esc(S.shopPhone)}</b></p>` : ""}
+      </section>
+    </div>`;
+    $("#cp").onclick = e => copy(link, e.currentTarget);
+    $("#notif")?.addEventListener("click", async () => { try { const p = await Notification.requestPermission(); toast(p === "granted" ? "Alerts on while this page is open" : "Alerts not allowed. This page still updates."); } catch { toast("This browser can't show alerts. The page still updates."); } $("#notif")?.remove(); });
+    $("#chg")?.addEventListener("click", () => { $("#payf").hidden = false; $("#chg").remove(); });
+    $("#payf")?.addEventListener("submit", async e => {
+      e.preventDefault(); const ref = $("#ref").value.trim();
+      if (ref.length < 4) { toast("Enter the Transaction ID from your MoMo SMS"); return; }
+      try { await store.customerPay(id, ref); toast("Sent to the pharmacy"); } catch { toast("Didn't send. Check your internet."); }
+    });
+  });
+}
+let flashT;
+function flashTitle(t) { if (!document.hidden) return; clearInterval(flashT); let on = false; const base = S.name + " · Orders"; flashT = setInterval(() => { document.title = (on = !on) ? "🔔 " + t : base; }, 1000); document.addEventListener("visibilitychange", () => { clearInterval(flashT); document.title = base; }, { once: true }); }
+
+/* ---------------- pharmacy side ---------------- */
+let tab = "open", seen = null, freshIds = new Set();
+
+function pharmacy(store) {
+  $("#shopsub").textContent = "Pharmacy dashboard";
+  unsub?.(); unsub = null;
+  $("#topactions").innerHTML = "";
+  authUnsub?.();
+  authUnsub = store.onAuth(u => {
+    if (!u) return loginView(store);
+    $("#topactions").innerHTML = `<button type="button" id="snd">${audioCtx ? "Sound on" : "Sound off"}</button><button type="button" id="qr">QR</button>${DEMO ? "" : `<button type="button" id="out">Log out</button>`}`;
+    $("#snd").onclick = () => { if (!audioCtx) { try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); beep(); } catch {} } else { audioCtx.close(); audioCtx = null; } $("#snd").textContent = audioCtx ? "Sound on" : "Sound off"; };
+    $("#qr").onclick = showQR;
+    $("#out")?.addEventListener("click", () => store.signOut());
+    app.innerHTML = `<div class="card empty">Loading orders…</div>`;
+    unsub?.();
+    unsub = store.watchAll(list => renderPharmacy(store, list), err => { app.innerHTML = `<div class="card empty">This account can't see orders. Check that its email is in the database rules (step 5 of the guide).</div>`; console.error(err); });
+  });
+}
+
+function loginView(store) {
+  unsub?.(); unsub = null;
+  $("#topactions").innerHTML = "";
+  app.innerHTML = `<form id="lf" class="card stack"><h2>Pharmacy login</h2>
+    <label class="f">Email<input id="le" type="text" inputmode="email" autocomplete="username"></label>
+    <label class="f">Password<input id="lp" type="password" autocomplete="current-password" style="width:100%;border:1.5px solid var(--line);background:var(--bg);border-radius:10px;padding:11px 12px"></label>
+    <p id="lerr" class="small" style="color:var(--no)" hidden></p><button class="btn full">Log in</button></form>`;
+  $("#lf").onsubmit = async e => { e.preventDefault(); try { await store.signIn($("#le").value.trim(), $("#lp").value); } catch { const x = $("#lerr"); x.textContent = "Email or password is wrong."; x.hidden = false; } };
+}
+
+function showQR() {
+  const url = location.href.split("#")[0];
+  modal(`<h2>Shop QR code</h2><p class="small muted">Print this and put it at the counter. Customers scan it to order.</p><div id="qrbox"></div><div class="copyrow"><code>${esc(url)}</code><button class="btn small ghost" id="qcp">Copy</button></div>`);
+  try { new QRCode($("#qrbox"), { text: url, width: 220, height: 220, colorDark: "#0f2a1f", colorLight: "#ffffff" }); } catch { $("#qrbox").textContent = "QR code couldn't load. Use the link."; }
+  $("#qcp").onclick = e => copy(url, e.currentTarget);
+}
+
+function renderPharmacy(store, list) {
+  if (seen) { for (const o of list) if (!seen.has(o.id)) { freshIds.add(o.id); toast("New order from " + o.name); beep(); sysNotify("New order", o.name + ": " + (o.items || []).map(i => i.name).join(", ")); } }
+  seen = new Set(list.map(o => o.id));
+  const paidPending = o => o.stage === "open" && o.momoRef;
+  const groups = {
+    open: list.filter(o => o.stage === "open"),
+    paid: list.filter(o => o.stage === "paid"),
+    done: list.filter(o => o.stage === "collected" || o.stage === "cancelled").slice(0, 40)
+  };
+  const needs = groups.open.filter(o => (o.items || []).some(i => i.status === "waiting") || paidPending(o)).length;
+  // keep focus + typed value across live updates
+  const act = document.activeElement, actId = act?.id, actVal = act?.value, selS = act?.selectionStart;
+  const shown = groups[tab];
+  app.innerHTML = `<div class="stack">
+    <div class="tabs" role="group" aria-label="Order lists">
+      <button data-tab="open" aria-pressed="${tab === "open"}">Open<span class="n">${groups.open.length}</span></button>
+      <button data-tab="paid" aria-pressed="${tab === "paid"}">Paid<span class="n">${groups.paid.length}</span></button>
+      <button data-tab="done" aria-pressed="${tab === "done"}">Done<span class="n">${groups.done.length}</span></button>
+    </div>
+    ${tab === "open" ? `<p class="small muted">${needs ? `<b style="color:var(--wait)">${needs} need${needs === 1 ? "s" : ""} your answer.</b> ` : "All caught up. "}Tap <b>Ready</b> or <b>None</b> on each medicine; the customer sees it right away.</p>` : ""}
+    ${shown.length ? shown.map(o => orderCard(o)).join("") : `<div class="card empty">${tab === "open" ? "No open orders. New ones appear here by themselves." : "Nothing here yet."}</div>`}
+  </div>`;
+  if (actId) { const el = document.getElementById(actId); if (el && "value" in el) { el.value = actVal; el.focus(); try { el.setSelectionRange(selS, selS); } catch {} } }
+  app.querySelectorAll("[data-tab]").forEach(b => b.onclick = () => { tab = b.dataset.tab; renderPharmacy(store, list); });
+  app.onclick = async e => {
+    const b = e.target.closest("[data-act]"); if (!b) return;
+    const o = list.find(x => x.id === b.dataset.id); if (!o) return;
+    const act = b.dataset.act;
+    freshIds.delete(o.id);
+    try {
+      if (act === "item") {
+        const items = o.items.map((it, i) => i == b.dataset.i ? { ...it, status: it.status === b.dataset.s ? "waiting" : b.dataset.s } : it);
+        await store.update(o.id, { items });
+      } else if (act === "all") {
+        await store.update(o.id, { items: o.items.map(it => ({ ...it, status: b.dataset.s })) });
+      } else if (act === "price") {
+        const v = $("#tot-" + o.id).value.trim(), n = $("#sn-" + o.id).value.trim();
+        await store.update(o.id, { total: v, shopNote: n.slice(0, 300) }); toast("Sent to " + o.name);
+      } else if (act === "paid") { await store.update(o.id, { stage: "paid" }); toast("Marked as paid"); }
+      else if (act === "collected") { await store.update(o.id, { stage: "collected" }); toast("Marked as collected"); }
+      else if (act === "cancel") {
+        if (b.dataset.sure) { await store.update(o.id, { stage: "cancelled" }); toast("Order closed"); }
+        else { b.dataset.sure = "1"; b.textContent = "Tap again to close"; }
+      }
+      else if (act === "reopen") { await store.update(o.id, { stage: "open" }); }
+      else if (act === "rx") modal(`<h2>Prescription</h2><img src="${o.rx}" alt="Prescription photo from ${esc(o.name)}">`);
+    } catch (ex) { console.error(ex); toast("Didn't save. Check your internet."); }
+  };
+}
+
+function orderCard(o) {
+  const it = o.items || [];
+  const open = o.stage === "open";
+  const total = cedi(o.total);
+  return `<article class="card ord ${freshIds.has(o.id) ? "fresh" : ""}">
+    <div class="ord-head">
+      <div style="min-width:0"><h3>${esc(o.name)}</h3><p class="small muted"><span style="user-select:all">${esc(o.phone)}</span> · ${ago(o.createdAt)}</p></div>
+      <div class="tags" style="justify-content:flex-end"><span class="chip info">${o.pay === "momo" ? "MoMo" : "Pay at pickup"}</span>${o.rx ? `<span class="chip info">℞ photo</span>` : ""}</div>
+    </div>
+    <ul class="items">${it.map((i, n) => `<li><span class="nm"><b>${esc(i.name)}</b> <span class="q">× ${esc(i.qty)}</span></span>${open ? `<span class="ibtns"><button data-act="item" data-id="${o.id}" data-i="${n}" data-s="ready" class="${i.status === "ready" ? "on-ok" : ""}" aria-pressed="${i.status === "ready"}">Ready</button><button data-act="item" data-id="${o.id}" data-i="${n}" data-s="unavailable" class="${i.status === "unavailable" ? "on-no" : ""}" aria-pressed="${i.status === "unavailable"}">None</button></span>` : chip(i.status)}</li>`).join("")}</ul>
+    ${open && it.length > 1 ? `<div class="actions"><button class="btn ghost small" data-act="all" data-s="ready" data-id="${o.id}">All ready</button><button class="btn ghost small" data-act="all" data-s="unavailable" data-id="${o.id}">None available</button></div>` : ""}
+    ${o.note ? `<p class="note small"><b>Customer note:</b> ${esc(o.note)}</p>` : ""}
+    ${o.rx ? `<img class="rxthumb" src="${o.rx}" alt="Prescription photo" data-act="rx" data-id="${o.id}">` : ""}
+    ${open ? `<div class="stack" style="gap:8px">
+      <div class="row"><label class="grow f" style="font-size:.85rem">Total (GH₵)<input id="tot-${o.id}" type="text" inputmode="decimal" value="${esc(o.total)}" placeholder="e.g. 35"></label></div>
+      <label class="f" style="font-size:.85rem">Message to customer <span class="hint">Optional</span><input id="sn-${o.id}" type="text" value="${esc(o.shopNote)}" placeholder="e.g. ORS back on Friday"></label>
+      <button class="btn small" data-act="price" data-id="${o.id}" style="align-self:flex-start">Send price & message</button>
+    </div>` : `${total ? `<div class="kv"><span class="muted">Total</span><b>${total}</b></div>` : ""}`}
+    ${open && o.momoRef ? `<div class="paid-alert"><p><b>Customer says they paid</b>${total ? " " + total : ""}. MoMo ID: <b style="user-select:all">${esc(o.momoRef)}</b></p><p class="small">Check your MoMo SMS for this ID before confirming.</p><button class="btn small" data-act="paid" data-id="${o.id}" style="align-self:flex-start">Confirm payment</button></div>` : ""}
+    <div class="actions">
+      ${o.stage === "open" || o.stage === "paid" ? `<button class="btn ghost small" data-act="collected" data-id="${o.id}">Collected</button>` : ""}
+      ${o.stage === "open" && !o.momoRef && o.pay === "momo" && total ? `<button class="btn ghost small" data-act="paid" data-id="${o.id}">Mark paid</button>` : ""}
+      ${open ? `<button class="btn ghost small" data-act="cancel" data-id="${o.id}">Close order</button>` : `<button class="btn ghost small" data-act="reopen" data-id="${o.id}">Reopen</button>`}
+    </div>
+  </article>`;
+}
+
+/* ---------------- routing ---------------- */
+let view = DEMO ? safeGet("rx_demo_view", "c") : null;
+function go(h) { location.hash = h; if (!h) route(); }
+let STORE;
+function route() {
+  const h = location.hash.replace(/^#/, "");
+  const admin = DEMO ? view === "a" : h === "admin";
+  if (DEMO) { $("#seg-c").setAttribute("aria-pressed", !admin); $("#seg-a").setAttribute("aria-pressed", admin); }
+  window.scrollTo(0, 0);
+  if (admin) return pharmacy(STORE);
+  seen = null;
+  const m = h.match(/^order-([A-Za-z0-9]+)$/);
+  m ? customerOrder(STORE, m[1]) : customerHome(STORE);
+}
+window.addEventListener("hashchange", route);
+
+(async () => {
+  try { STORE = DEMO ? demoStore() : await fireStore(); }
+  catch (e) { console.error(e); app.innerHTML = `<div class="card empty">Couldn't connect. Check your internet and reload.</div>`; return; }
+  if (DEMO) {
+    $("#demobar").hidden = false;
+    $("#seg-c").onclick = () => { view = "c"; safeSet("rx_demo_view", "c"); route(); };
+    $("#seg-a").onclick = () => { view = "a"; safeSet("rx_demo_view", "a"); route(); };
+  }
+  route();
+})();
+</script>
+
+</body></html>

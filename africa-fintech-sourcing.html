@@ -1,0 +1,1154 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Africa Fintech Sourcing System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Layout: one 1120px column; each section = eyebrow + heading + a working tool. Sections feed each other (score -> pipeline -> syndicate -> returns). */
+:root{
+  --bg:#F4F7F5; --surface:#FFFFFF; --surface-2:#E9EFEB; --ink:#13201B; --muted:#56655E; --line:#D3DDD7;
+  --good:#1D7F53; --warn:#9A6408; --bad:#B03535;
+  --good-soft:#DDF1E6; --warn-soft:#F7EBD2; --bad-soft:#F6DEDE;
+  /* palette: Baobab (default) */
+  --accent:#0F5C4A; --accent-2:#B97C0C; --accent-soft:#D9EAE2; --on-accent:#FFFFFF;
+  --font-display:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;
+  --font-body:'IBM Plex Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --font-mono:'IBM Plex Mono',ui-monospace,Consolas,monospace;
+  --radius:10px;
+}
+:root[data-palette="adire"]{--accent:#2C3E91;--accent-2:#A66F00;--accent-soft:#E0E4F5;--on-accent:#FFFFFF}
+:root[data-palette="hibiscus"]{--accent:#8C2F5A;--accent-2:#23766A;--accent-soft:#F3DFE8;--on-accent:#FFFFFF}
+
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0D1412; --surface:#141D1A; --surface-2:#1B2622; --ink:#E4EDE8; --muted:#90A199; --line:#28362F;
+    --good:#4FC48D; --warn:#E2A94B; --bad:#EA7676;
+    --good-soft:#163427; --warn-soft:#3A2C12; --bad-soft:#3B1C1C;
+    --accent:#5CC3A2; --accent-2:#E3AE45; --accent-soft:#163A30; --on-accent:#0B1512;
+    color-scheme:dark;
+  }
+  :root[data-palette="adire"]:not([data-theme="light"]){--accent:#93A4F2;--accent-2:#E5B54A;--accent-soft:#1F2647;--on-accent:#0E1330}
+  :root[data-palette="hibiscus"]:not([data-theme="light"]){--accent:#E68DB4;--accent-2:#6CC7B3;--accent-soft:#3A1B2A;--on-accent:#2A0E1B}
+}
+:root[data-theme="dark"]{
+  --bg:#0D1412; --surface:#141D1A; --surface-2:#1B2622; --ink:#E4EDE8; --muted:#90A199; --line:#28362F;
+  --good:#4FC48D; --warn:#E2A94B; --bad:#EA7676;
+  --good-soft:#163427; --warn-soft:#3A2C12; --bad-soft:#3B1C1C;
+  --accent:#5CC3A2; --accent-2:#E3AE45; --accent-soft:#163A30; --on-accent:#0B1512;
+  color-scheme:dark;
+}
+:root[data-theme="dark"][data-palette="adire"]{--accent:#93A4F2;--accent-2:#E5B54A;--accent-soft:#1F2647;--on-accent:#0E1330}
+:root[data-theme="dark"][data-palette="hibiscus"]{--accent:#E68DB4;--accent-2:#6CC7B3;--accent-soft:#3A1B2A;--on-accent:#2A0E1B}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:15px;line-height:1.55}
+.wrap{max-width:1120px;margin:0 auto;padding-inline:clamp(16px,4vw,32px)}
+h1,h2,h3{font-family:var(--font-display);text-wrap:balance;margin:0;line-height:1.08}
+h1{font-size:clamp(2.1rem,5.2vw,3.6rem);font-weight:800;letter-spacing:-.02em}
+h2{font-size:clamp(1.6rem,3.2vw,2.3rem);font-weight:700;letter-spacing:-.015em}
+h3{font-size:1.1rem;font-weight:700}
+p{margin:0}
+.eyebrow{font-family:var(--font-mono);font-size:.75rem;letter-spacing:.09em;text-transform:uppercase;color:var(--accent)}
+.lede{color:var(--muted);max-width:62ch;font-size:1.02rem}
+.num{font-variant-numeric:tabular-nums}
+.mono{font-family:var(--font-mono)}
+button,select,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+input[type=range]{accent-color:var(--accent);width:100%}
+
+/* buttons & chips */
+.btn{border:1px solid var(--line);background:var(--surface);padding:.45rem .85rem;border-radius:8px;cursor:pointer;font-weight:500;font-size:.9rem;transition:border-color .15s,background .15s}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.btn.small{padding:.25rem .6rem;font-size:.82rem}
+.chips{display:flex;flex-wrap:wrap;gap:.4rem}
+.chip{border:1px solid var(--line);background:transparent;border-radius:999px;padding:.25rem .75rem;font-size:.84rem;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.pill{display:inline-flex;align-items:center;gap:.3rem;border-radius:999px;padding:.08rem .55rem;font-size:.76rem;font-weight:600;white-space:nowrap}
+.pill.good{background:var(--good-soft);color:var(--good)}
+.pill.warn{background:var(--warn-soft);color:var(--warn)}
+.pill.bad{background:var(--bad-soft);color:var(--bad)}
+.pill.neutral{background:var(--surface-2);color:var(--muted)}
+.field{display:grid;gap:.3rem}
+.field label,.label{font-size:.78rem;color:var(--muted);font-weight:500}
+select,input[type=number],input[type=search]{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:.42rem .6rem;min-width:0;width:100%}
+.sample{font-size:.8rem;color:var(--muted);border:1px dashed var(--line);border-radius:8px;padding:.35rem .7rem;display:inline-block}
+
+/* header */
+header.hero{padding-block:56px 48px}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:48px;align-items:end}
+.hero-copy{display:grid;gap:18px}
+.hero h1 em{font-style:normal;color:var(--accent)}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;margin-top:36px}
+.kpi{background:var(--surface);padding:14px 16px;display:grid;gap:2px}
+.kpi b{font-family:var(--font-display);font-size:1.7rem;font-weight:700;font-variant-numeric:tabular-nums}
+.kpi span{font-size:.8rem;color:var(--muted)}
+.funnel{display:grid;gap:8px}
+.funnel-row{display:grid;grid-template-columns:92px minmax(0,1fr) 28px;align-items:center;gap:10px;font-size:.85rem}
+.funnel-row .bar{height:28px;border-radius:4px;background:var(--accent);opacity:var(--o,1);transition:width .4s ease}
+.funnel-row .track{display:flex;justify-content:center}
+.funnel-row b{font-variant-numeric:tabular-nums;text-align:right}
+.funnel-caption{font-size:.8rem;color:var(--muted);margin-top:4px}
+
+/* sticky nav */
+nav.sticky{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-block:1px solid var(--line)}
+.nav-inner{display:flex;align-items:center;gap:16px;min-height:52px}
+.nav-links{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;flex:1;min-width:0}
+.nav-links::-webkit-scrollbar{display:none}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:.88rem;padding:.35rem .7rem;border-radius:6px;white-space:nowrap;font-weight:500}
+.nav-links a:hover{color:var(--ink)}
+.nav-links a.active{color:var(--ink);background:var(--accent-soft)}
+.theme-tools{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.swatch{width:22px;height:22px;border-radius:50%;border:2px solid var(--surface);box-shadow:0 0 0 1px var(--line);cursor:pointer;padding:0}
+.swatch[aria-pressed="true"]{box-shadow:0 0 0 2px var(--ink)}
+.swatch[data-p="baobab"]{background:linear-gradient(135deg,#0F5C4A 50%,#B97C0C 50%)}
+.swatch[data-p="adire"]{background:linear-gradient(135deg,#2C3E91 50%,#A66F00 50%)}
+.swatch[data-p="hibiscus"]{background:linear-gradient(135deg,#8C2F5A 50%,#23766A 50%)}
+#modeBtn{font-size:.78rem;font-family:var(--font-mono)}
+
+/* sections */
+section{padding-block:72px;border-top:1px solid var(--line);scroll-margin-top:56px}
+.sec-head{display:grid;gap:10px;margin-bottom:32px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:24px;align-items:start}
+
+/* syndicate */
+.roles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-bottom:24px}
+.role{border-top:3px solid var(--accent);padding-top:12px;display:grid;gap:6px}
+.role:nth-child(2){border-color:var(--accent-2)}
+.role:nth-child(3){border-color:var(--muted)}
+.role p{color:var(--muted);font-size:.9rem}
+.role .mono{font-size:.8rem}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{border:0;background:transparent;padding:.4rem .8rem;cursor:pointer;font-size:.88rem}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent)}
+.stack{position:relative;display:flex;height:40px;border-radius:6px;overflow:hidden;background:var(--surface-2);margin-top:28px}
+.stack > div{height:100%;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:600;color:var(--on-accent);overflow:hidden;white-space:nowrap;transition:width .35s ease;border-right:2px solid var(--surface)}
+.stack .gap{background:repeating-linear-gradient(45deg,var(--surface-2),var(--surface-2) 6px,var(--line) 6px,var(--line) 12px);color:var(--muted)}
+.stack-wrap{position:relative}
+.round-marker{position:absolute;top:0;bottom:0;border-left:2px dashed var(--ink);pointer-events:none}
+.round-marker span{position:absolute;top:-22px;left:-1px;transform:translateX(-50%);font-size:.72rem;font-family:var(--font-mono);white-space:nowrap}
+.alloc{width:100%;border-collapse:collapse;margin-top:18px;font-size:.9rem}
+.alloc td{padding:.45rem 0;border-bottom:1px solid var(--line)}
+.alloc td:last-child{text-align:right}
+.dot{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:8px;vertical-align:-1px}
+.checks{display:grid;gap:8px;margin-top:18px}
+.checks div{display:flex;justify-content:space-between;gap:12px;font-size:.9rem;align-items:center}
+.controls{display:grid;gap:16px}
+.ctrl-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+
+/* table */
+.toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;margin-bottom:16px}
+.toolbar .search{max-width:260px}
+.table-scroll{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface)}
+table.inv{width:100%;border-collapse:collapse;min-width:640px;font-size:.92rem}
+table.inv th{font-size:.74rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);text-align:left;font-weight:600;padding:.7rem 1rem;border-bottom:1px solid var(--line);background:var(--surface-2)}
+table.inv td{padding:.7rem 1rem;border-bottom:1px solid var(--line);vertical-align:middle}
+table.inv tr:last-child td{border-bottom:0}
+table.inv tr.picked td{background:var(--accent-soft)}
+.inv-name{font-weight:600}
+.inv-type{font-size:.8rem;color:var(--muted)}
+
+/* pipeline */
+.board{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.col{background:var(--surface-2);border-radius:var(--radius);padding:12px;display:grid;gap:10px;align-content:start;min-width:0}
+.col-head{display:flex;justify-content:space-between;align-items:baseline;font-weight:600;font-size:.9rem;padding-inline:2px}
+.col-head span{font-family:var(--font-mono);color:var(--muted);font-size:.8rem}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px;text-align:left;cursor:pointer;display:grid;gap:6px;width:100%;transition:border-color .15s,transform .15s}
+.card:hover{border-color:var(--accent);transform:translateY(-1px)}
+.card-top{display:flex;justify-content:space-between;gap:8px;align-items:start}
+.card-name{font-weight:600;line-height:1.25}
+.card-meta{font-size:.8rem;color:var(--muted)}
+.card-foot{display:flex;justify-content:space-between;font-size:.8rem;font-family:var(--font-mono);color:var(--muted)}
+.score-chip{font-family:var(--font-mono);font-weight:600;font-size:.82rem;padding:.05rem .45rem;border-radius:5px}
+.empty{font-size:.82rem;color:var(--muted);padding:8px 2px}
+
+/* scoring */
+.weights{display:grid;gap:14px}
+.w-row{display:grid;gap:4px}
+.w-row .top{display:flex;justify-content:space-between;gap:8px;font-size:.9rem}
+.w-row .top b{font-weight:600}
+.w-row .desc{font-size:.78rem;color:var(--muted)}
+.w-row .val{font-family:var(--font-mono);font-size:.82rem;color:var(--muted)}
+.rank{display:grid;gap:7px}
+.rank-row{display:grid;grid-template-columns:130px minmax(0,1fr) 44px;gap:10px;align-items:center;font-size:.86rem;cursor:pointer;border-radius:4px}
+.rank-row:hover .rank-name{color:var(--accent)}
+.rank-name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rank-track{position:relative;height:16px;background:var(--surface-2);border-radius:3px}
+.rank-bar{height:100%;border-radius:3px;transition:width .35s ease}
+.rank-row b{font-family:var(--font-mono);text-align:right;font-weight:500}
+.thresh{position:absolute;top:-3px;bottom:-3px;border-left:1px dashed var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:.8rem;color:var(--muted);margin-top:14px}
+
+/* returns */
+.out-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+.out{background:var(--surface);padding:12px 14px;display:grid;gap:2px}
+.out span{font-size:.76rem;color:var(--muted)}
+.out b{font-family:var(--font-display);font-size:1.35rem;font-variant-numeric:tabular-nums}
+.out.hl b{color:var(--accent)}
+.chart{width:100%;height:auto;display:block;margin-top:18px}
+.chart text{fill:var(--muted);font-family:var(--font-mono);font-size:11px}
+.chart .grid{stroke:var(--line);stroke-width:1}
+.chart .ref{stroke:var(--ink);stroke-dasharray:4 4;stroke-width:1}
+.chart .barv{fill:var(--accent)}
+.chart .barx{fill:var(--accent-2)}
+.chart .barlabel{fill:var(--ink);font-weight:500;font-size:12px}
+.prob-note{font-size:.8rem;color:var(--muted)}
+
+/* methodology */
+.steps{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:16px;counter-reset:s}
+.steps li{counter-increment:s;display:grid;gap:6px;align-content:start;border-top:1px solid var(--ink);padding-top:12px}
+.steps li::before{content:counter(s,decimal-leading-zero);font-family:var(--font-mono);font-size:.8rem;color:var(--accent)}
+.steps p{font-size:.88rem;color:var(--muted)}
+.sources{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;margin-top:40px}
+.sources ul{margin:8px 0 0;padding-left:18px;color:var(--muted);font-size:.9rem;display:grid;gap:4px}
+
+footer{border-top:1px solid var(--line);padding-block:32px;text-align:center;font-size:.78rem;color:var(--muted)}
+
+/* dialog */
+dialog{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:14px;padding:0;width:min(580px,calc(100% - 32px));max-height:calc(100% - 48px)}
+dialog::backdrop{background:rgba(5,12,10,.5)}
+.dlg{padding:22px;display:grid;gap:16px}
+.dlg-head{display:flex;justify-content:space-between;gap:12px;align-items:start}
+.metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.metrics div{background:var(--surface-2);border-radius:8px;padding:8px 10px}
+.metrics span{display:block;font-size:.72rem;color:var(--muted)}
+.metrics b{font-variant-numeric:tabular-nums}
+.crit{display:grid;grid-template-columns:130px minmax(0,1fr) 34px;gap:10px;align-items:center;font-size:.85rem}
+.pips{display:flex;gap:3px}
+.pips i{flex:1;height:8px;border-radius:2px;background:var(--surface-2)}
+.pips i.on{background:var(--accent)}
+.dlg-actions{display:flex;flex-wrap:wrap;gap:8px}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:.5rem 1rem;border-radius:8px;font-size:.88rem;z-index:50}
+
+/* ---- motion ---- */
+.still *,.still *::before,.still *::after{animation:none!important;transition:none!important}
+/* odometer (11) */
+.odo{display:inline-flex;overflow:hidden;height:1.15em;line-height:1.15em;vertical-align:bottom}
+.odo-col{display:flex;flex-direction:column;transition:transform 1.1s cubic-bezier(.16,1,.3,1)}
+.odo-col span,.odo-ch{display:block;height:1.15em}
+/* slot type (08) + magnetic type (09) */
+.hero h1 .word{white-space:nowrap}
+.hero h1 .mag{font-weight:var(--w,640);transition:font-weight .25s ease}
+.slot{display:inline-block;position:relative;overflow:hidden;height:1.12em;vertical-align:bottom;color:var(--accent);transition:width .6s cubic-bezier(.16,1,.3,1)}
+.slot-track{display:flex;flex-direction:column;align-items:flex-start;transition:transform .7s cubic-bezier(.7,0,.2,1)}
+.slot-track span{display:block;height:1.12em;line-height:1.12em;white-space:nowrap}
+.slot::after{content:"";position:absolute;left:0;right:0;bottom:.02em;height:4px;border-radius:2px;background:var(--accent-2)}
+/* particle flow (05) */
+.funnel-box{position:relative}
+.funnel-box canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+/* drag physics (03) */
+.card{cursor:grab;user-select:none;-webkit-user-select:none}
+.card.placeholder{opacity:.35;border-style:dashed}
+.drag-ghost{position:fixed;z-index:60;pointer-events:none;margin:0;cursor:grabbing;box-shadow:0 18px 40px rgba(0,0,0,.22);border-color:var(--accent);will-change:transform}
+.col{transition:box-shadow .15s,background .15s}
+.col.drop{box-shadow:inset 0 0 0 2px var(--accent);background:var(--accent-soft)}
+/* comet paths (12) */
+.paths{width:100%;height:auto;display:block;margin-bottom:6px}
+.paths .wire{fill:none;stroke:var(--line);stroke-width:1.5}
+.paths .wire.dash{stroke-dasharray:4 4}
+.paths .comet{fill:none;stroke-width:3;stroke-linecap:round;stroke-dasharray:10 100;animation:comet 2.4s linear infinite}
+@keyframes comet{from{stroke-dashoffset:110}to{stroke-dashoffset:0}}
+.paths .node-l{fill:var(--accent)}
+.paths .node-l-t{fill:var(--on-accent);font-weight:600}
+.paths text{font-family:var(--font-body);font-size:12px;fill:var(--ink)}
+.paths .amt{font-family:var(--font-mono);font-size:11px;fill:var(--muted)}
+.paths .node-r{fill:var(--surface);stroke:var(--line)}
+.paths .gapnode{fill:none;stroke:var(--muted);stroke-dasharray:4 3}
+.paths .rnode.new{animation:pop .5s cubic-bezier(.3,1.6,.5,1) backwards;transform-box:fill-box;transform-origin:center}
+@keyframes pop{from{transform:scale(.5);opacity:0}}
+/* spring open (15) */
+dialog[open]{animation:springIn .45s cubic-bezier(.3,1.4,.5,1)}
+dialog[open]::backdrop{animation:fade .3s ease}
+@keyframes springIn{from{opacity:0;transform:translateY(16px) scale(.94)}}
+@keyframes fade{from{opacity:0}}
+.pips i.on{transform-origin:left;animation:pip .4s cubic-bezier(.3,1.6,.5,1) backwards;animation-delay:calc(var(--d) * 45ms)}
+@keyframes pip{from{transform:scaleX(0)}}
+/* closing loop on methodology */
+.steps-wrap{position:relative}
+.runner{position:absolute;left:0;right:0;top:-1px;height:2px;pointer-events:none}
+.runner i{position:absolute;left:0;top:0;height:2px;width:0;background:var(--accent);animation:run 6s linear infinite}
+.runner b{position:absolute;top:-4px;left:0;width:10px;height:10px;margin-left:-5px;border-radius:50%;background:var(--accent);animation:runDot 6s linear infinite}
+@keyframes run{0%{width:0;opacity:1}90%{width:100%;opacity:1}100%{width:100%;opacity:0}}
+@keyframes runDot{0%{left:0;opacity:1}90%{left:100%;opacity:1}100%{left:100%;opacity:0}}
+.steps li h3{animation:stepOn 6s linear infinite;animation-delay:calc(var(--i) * 1.08s)}
+@keyframes stepOn{0%,20%{color:var(--accent)}24%,100%{color:var(--ink)}}
+
+@media (max-width:900px){
+  .runner{display:none}
+  .hero-grid,.two{grid-template-columns:1fr}
+  .board{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .steps{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .sources{grid-template-columns:1fr}
+}
+@media (max-width:560px){
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .roles,.board,.steps{grid-template-columns:1fr}
+  .out-grid,.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .rank-row{grid-template-columns:96px minmax(0,1fr) 36px}
+  .crit{grid-template-columns:100px minmax(0,1fr) 30px}
+  .theme-tools .swatch{width:18px;height:18px}
+  .ctrl-row{grid-template-columns:1fr 1fr}
+}
+</style>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <span class="eyebrow">Quona EMEA · Case A</span>
+        <h1 aria-label="Africa Fintech Sourcing System"><span class="word" data-mag>Africa</span> <span class="word" data-mag>Fintech</span> <span class="slot" id="slot" aria-hidden="true"><span class="slot-track"><span>Sourcing</span><span>Scoring</span><span>Syndicating</span><span>Modelling</span><span>Sourcing</span></span></span> <span class="word" data-mag>System</span></h1>
+        <p class="lede">One working view of the deal flow: who we are tracking, how each company scores against our thesis, who we would syndicate with, and what the round could return. Change a weight or a stage and every section updates.</p>
+        <div><span class="sample">Sample companies and relationship data, for layout. Replace with your own pipeline.</span></div>
+      </div>
+      <div>
+        <div class="label" style="margin-bottom:10px">Pipeline funnel</div>
+        <div class="funnel-box"><div class="funnel" id="funnel"></div><canvas id="flow" aria-hidden="true"></canvas></div>
+        <p class="funnel-caption" id="funnelCaption"></p>
+      </div>
+    </div>
+    <div class="kpis" id="kpis"></div>
+  </div>
+</header>
+
+<nav class="sticky" aria-label="Sections">
+  <div class="wrap nav-inner">
+    <div class="nav-links" id="navLinks">
+      <a href="#syndicate">Syndicate</a>
+      <a href="#investors">Investors</a>
+      <a href="#pipeline">Pipeline</a>
+      <a href="#scoring">Scoring</a>
+      <a href="#returns">Returns</a>
+      <a href="#methodology">Methodology</a>
+    </div>
+    <div class="theme-tools" role="group" aria-label="Theme">
+      <button class="swatch" data-p="baobab" title="Baobab theme" aria-label="Baobab theme"></button>
+      <button class="swatch" data-p="adire" title="Adire theme" aria-label="Adire theme"></button>
+      <button class="swatch" data-p="hibiscus" title="Hibiscus theme" aria-label="Hibiscus theme"></button>
+      <button class="btn small" id="modeBtn" aria-label="Toggle light or dark mode">Auto</button>
+      <button class="btn small mono" id="motionBtn" style="font-size:.78rem" aria-pressed="true">Motion on</button>
+    </div>
+  </div>
+</nav>
+
+<main>
+<section id="syndicate">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Syndicate framework</span>
+      <h2>Build the round before the term sheet</h2>
+      <p class="lede">Pick a company, choose Quona's role, and add co-investors from the shortlist below. The bar shows how much of the round is covered and where the gap is.</p>
+    </div>
+    <div class="roles">
+      <div class="role"><h3>Lead</h3><p>Sets terms, takes the board seat, anchors 35–50% of the round.</p><span class="mono">Quona slot · 40%</span></div>
+      <div class="role"><h3>Co-lead</h3><p>Shares diligence and a board observer seat. Anchors 20–30%.</p><span class="mono">Quona slot · 25%</span></div>
+      <div class="role"><h3>Follow</h3><p>Takes pro-rata on agreed terms. Brings network, not governance.</p><span class="mono">Quona slot · 10%</span></div>
+    </div>
+    <div class="two">
+      <div class="panel controls">
+        <div class="field"><label for="synCompany">Company</label><select id="synCompany"></select></div>
+        <div class="field">
+          <label for="synRound">Round size · <span id="synRoundVal" class="num"></span></label>
+          <input type="range" id="synRound" min="1" max="30" step="0.5">
+        </div>
+        <div class="field">
+          <span class="label">Quona role</span>
+          <div class="seg" id="synRole">
+            <button data-r="lead">Lead</button><button data-r="colead">Co-lead</button><button data-r="follow">Follow</button>
+          </div>
+        </div>
+        <div class="checks" id="synChecks"></div>
+      </div>
+      <div class="panel">
+        <svg class="paths" id="synPaths" viewBox="0 0 360 120" role="img" aria-label="Syndicate participants and their allocations"></svg>
+        <div class="stack-wrap"><div class="stack" id="synStack"></div><div class="round-marker" id="synMarker"><span>Round size</span></div></div>
+        <table class="alloc" id="synAlloc"></table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="investors">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Investor shortlist</span>
+      <h2>Who we call first</h2>
+      <p class="lede">Co-investors active in African fintech, grouped by the role they usually play. Add one to put it in the syndicate above.</p>
+    </div>
+    <div class="toolbar">
+      <div class="chips" id="invFilter"></div>
+      <input type="search" id="invSearch" class="search" placeholder="Search investors" aria-label="Search investors">
+    </div>
+    <div class="table-scroll">
+      <table class="inv">
+        <thead><tr><th>Investor</th><th>Stage focus</th><th>Role fit</th><th>Relationship</th><th></th></tr></thead>
+        <tbody id="invBody"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="pipeline">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Company pipeline</span>
+      <h2>From first call to IC</h2>
+      <p class="lede">Drag a card to another stage, or open it to see its score breakdown and send it to the syndicate and returns tools.</p>
+    </div>
+    <div class="toolbar">
+      <div class="chips" id="secFilter"></div>
+      <div style="display:flex;gap:8px;min-width:0">
+        <select id="ctyFilter" aria-label="Filter by country"></select>
+        <input type="search" id="coSearch" placeholder="Search companies" aria-label="Search companies">
+      </div>
+    </div>
+    <div class="board" id="board"></div>
+  </div>
+</section>
+
+<section id="scoring">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Scoring framework</span>
+      <h2>Six criteria, weights you control</h2>
+      <p class="lede">Each company is rated 1–5 on every criterion. The weighted score out of 100 decides the call: 75+ advance, 60–74 watch, below 60 pass.</p>
+    </div>
+    <div class="two">
+      <div class="panel">
+        <div class="toolbar" style="margin-bottom:18px">
+          <div class="chips" id="presets"></div>
+        </div>
+        <div class="weights" id="weights"></div>
+      </div>
+      <div class="panel">
+        <div class="label" style="margin-bottom:12px">Ranking at current weights</div>
+        <div class="rank" id="rank"></div>
+        <div class="legend"><span><span class="pill good">Advance ≥75</span></span><span><span class="pill warn">Watch 60–74</span></span><span><span class="pill bad">Pass &lt;60</span></span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="returns">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Returns model</span>
+      <h2>What the cheque could return</h2>
+      <p class="lede">Entry ownership is diluted by each later round, then multiplied by the exit value. Three scenarios, weighted by your probabilities, give the expected multiple.</p>
+    </div>
+    <div class="two">
+      <form class="panel controls" id="retForm" onsubmit="return false">
+        <div class="field"><label for="retCompany">Load from pipeline</label><select id="retCompany"></select></div>
+        <div class="ctrl-row">
+          <div class="field"><label for="rCheck">Quona cheque ($M)</label><input type="number" id="rCheck" step="0.5" min="0.1"></div>
+          <div class="field"><label for="rPost">Post-money ($M)</label><input type="number" id="rPost" step="1" min="1"></div>
+          <div class="field"><label for="rDil">Dilution per round (%)</label><input type="number" id="rDil" step="1" min="0" max="60"></div>
+          <div class="field"><label for="rRounds">Rounds before exit</label><input type="number" id="rRounds" step="1" min="0" max="6"></div>
+          <div class="field"><label for="rExit">Base exit value ($M)</label><input type="number" id="rExit" step="10" min="1"></div>
+          <div class="field"><label for="rYears">Years to exit</label><input type="number" id="rYears" step="1" min="1" max="15"></div>
+        </div>
+        <div class="field"><label for="pLoss">Write-off probability · <span id="pLossVal" class="num"></span></label><input type="range" id="pLoss" min="0" max="80" step="5"></div>
+        <div class="field"><label for="pUp">Upside (3× exit) probability · <span id="pUpVal" class="num"></span></label><input type="range" id="pUp" min="0" max="50" step="5"></div>
+        <p class="prob-note" id="pBaseNote"></p>
+      </form>
+      <div class="panel">
+        <div class="out-grid" id="retOut"></div>
+        <svg class="chart" id="retChart" viewBox="0 0 560 260" role="img" aria-label="Multiple on invested capital by scenario"></svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="methodology">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Methodology</span>
+      <h2>How the system runs each quarter</h2>
+    </div>
+    <div class="steps-wrap">
+    <ol class="steps">
+      <li style="--i:0"><h3>Map the universe</h3><p>Pull every African fintech that raised in the last 24 months, plus scout and accelerator lists.</p></li>
+      <li style="--i:1"><h3>Screen</h3><p>Filter on stage (Seed+ to Series A), ticket fit ($2–8M) and inclusion thesis.</p></li>
+      <li style="--i:2"><h3>Score</h3><p>Two partners rate the six criteria independently. Gaps over one point go to discussion.</p></li>
+      <li style="--i:3"><h3>Syndicate</h3><p>Match each IC-ready deal to a lead and two co-investors from the shortlist.</p></li>
+      <li style="--i:4"><h3>Refresh</h3><p>Re-score, re-stage and re-run returns every quarter, or on any new round.</p></li>
+    </ol>
+    <div class="runner" aria-hidden="true"><i></i><b></b></div>
+    </div>
+    <div class="sources">
+      <div><span class="eyebrow">Data sources</span><ul><li>Briter Bridges and Africa: The Big Deal</li><li>Crunchbase and Partech Africa reports</li><li>Central bank licence registers</li></ul></div>
+      <div><span class="eyebrow">Deal channels</span><ul><li>Co-investor referrals</li><li>Scout network in 8 markets</li><li>Accelerators, events and inbound</li></ul></div>
+      <div><span class="eyebrow">Limits</span><ul><li>Self-reported ARR until diligence</li><li>Francophone coverage is thinner</li><li>Exit values are scenario inputs, not forecasts</li></ul></div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer><div class="wrap">Quona EMEA — Case A: Africa Fintech Sourcing System · Refreshed quarterly · Last update: Q1 2026</div></footer>
+
+<dialog id="dlg"><div class="dlg" id="dlgBody"></div></dialog>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+(() => {
+const STAGES = [
+  {k:'sourced', label:'Sourced'}, {k:'screen', label:'Screening'},
+  {k:'deep', label:'Deep dive'}, {k:'ic', label:'IC-ready'}
+];
+const CRITERIA = [
+  {k:'team', label:'Founding team', desc:'Domain depth, prior exits, local operating experience', w:25},
+  {k:'market', label:'Market size', desc:'Serviceable market across the first three countries', w:15},
+  {k:'unit', label:'Unit economics', desc:'Contribution margin, CAC payback, credit losses', w:20},
+  {k:'traction', label:'Traction', desc:'Revenue growth and customer retention', w:20},
+  {k:'moat', label:'Licensing & moat', desc:'Licences held, integrations, data advantage', w:10},
+  {k:'impact', label:'Inclusion impact', desc:'Share of underserved customers and MSMEs', w:10}
+];
+const PRESETS = {
+  'Balanced': {team:25,market:15,unit:20,traction:20,moat:10,impact:10},
+  'Impact-first': {team:20,market:10,unit:15,traction:15,moat:10,impact:30},
+  'Growth-first': {team:20,market:20,unit:10,traction:35,moat:10,impact:5}
+};
+const COMPANIES = [
+  {id:'kora', name:'Kora Pay', country:'Nigeria', cc:'NG', sector:'Payments', stage:'ic', round:'Series A', raise:12, post:48, arr:3.1, growth:180, source:'Co-investor referral', note:'Merchant-acquiring APIs for mid-market retailers. 2,400 active merchants.', s:{team:5,market:4,unit:3,traction:5,moat:3,impact:4}},
+  {id:'ubuntu', name:'Ubuntu Rails', country:'South Africa', cc:'ZA', sector:'Banking infra', stage:'ic', round:'Series A', raise:9, post:36, arr:2.8, growth:110, source:'Outbound', note:'Banking-as-a-service core and card issuing for neobanks across SADC.', s:{team:5,market:4,unit:4,traction:4,moat:5,impact:3}},
+  {id:'sahel', name:'Sahel Credit', country:'Senegal', cc:'SN', sector:'SME lending', stage:'deep', round:'Seed+', raise:5, post:20, arr:1.2, growth:140, source:'Scout network', note:'Invoice-backed working capital for informal wholesalers in the UEMOA zone.', s:{team:4,market:4,unit:4,traction:3,moat:4,impact:5}},
+  {id:'tano', name:'Tano Wallet', country:'Ghana', cc:'GH', sector:'Remittances', stage:'deep', round:'Series A', raise:10, post:40, arr:2.4, growth:95, source:'Event', note:'UK and US corridors into Ghana and Nigeria with mobile-money payout.', s:{team:4,market:3,unit:4,traction:3,moat:2,impact:3}},
+  {id:'pesa', name:'Pesa Grid', country:'Rwanda', cc:'RW', sector:'Asset finance', stage:'deep', round:'Series A', raise:8, post:30, arr:1.9, growth:130, source:'Outbound', note:'Pay-as-you-go solar and e-mobility financing with remote device lockout.', s:{team:4,market:4,unit:3,traction:4,moat:4,impact:5}},
+  {id:'mvua', name:'Mvua Insure', country:'Kenya', cc:'KE', sector:'Insurtech', stage:'screen', round:'Seed', raise:3, post:14, arr:0.6, growth:210, source:'Inbound', note:'Parametric crop and weather cover sold through agri-input dealers.', s:{team:3,market:4,unit:2,traction:4,moat:3,impact:5}},
+  {id:'nile', name:'Nile Ledger', country:'Egypt', cc:'EG', sector:'BNPL', stage:'screen', round:'Series A', raise:15, post:65, arr:4.0, growth:120, source:'Co-investor referral', note:'Checkout financing for electronics and school fees.', s:{team:4,market:5,unit:2,traction:4,moat:3,impact:2}},
+  {id:'atlas', name:'Atlas Agri Finance', country:'Morocco', cc:'MA', sector:'SME lending', stage:'screen', round:'Seed+', raise:6, post:24, arr:0.9, growth:85, source:'Inbound', note:'Equipment leasing for smallholder co-operatives, funded by a bank facility.', s:{team:4,market:3,unit:4,traction:2,moat:3,impact:4}},
+  {id:'faraja', name:'Faraja Health Pay', country:'Kenya', cc:'KE', sector:'Insurtech', stage:'screen', round:'Seed', raise:2.5, post:11, arr:0.4, growth:170, source:'Accelerator', note:'Clinic-embedded health financing paid back over M-Pesa.', s:{team:3,market:3,unit:3,traction:3,moat:2,impact:5}},
+  {id:'duka', name:'Duka Books', country:'Tanzania', cc:'TZ', sector:'Merchant software', stage:'sourced', round:'Pre-seed', raise:1.5, post:7, arr:0.2, growth:260, source:'Accelerator', note:'Bookkeeping and stock app for dukas, with a credit-scoring data layer.', s:{team:3,market:3,unit:3,traction:3,moat:2,impact:4}},
+  {id:'zawadi', name:'Zawadi Save', country:'Uganda', cc:'UG', sector:'Savings', stage:'sourced', round:'Seed', raise:2, post:9, arr:0.3, growth:150, source:'Scout network', note:'Digitises rotating savings groups and adds group-backed micro-loans.', s:{team:3,market:3,unit:3,traction:2,moat:3,impact:5}},
+  {id:'mansa', name:'Mansa Cards', country:"Côte d'Ivoire", cc:'CI', sector:'Payments', stage:'sourced', round:'Seed', raise:3.5, post:15, arr:0.5, growth:190, source:'Co-investor referral', note:'Virtual USD cards for freelancers and SMEs paying foreign suppliers.', s:{team:4,market:3,unit:3,traction:3,moat:2,impact:3}}
+];
+const INVESTORS = [
+  {id:'tlcom', name:'TLcom Capital', type:'Venture capital', stage:'Series A', fit:'Lead', rel:'Warm'},
+  {id:'norrsken', name:'Norrsken22', type:'Growth venture', stage:'Series A–C', fit:'Lead', rel:'Cold'},
+  {id:'lightspeed', name:'Lightspeed', type:'Global venture', stage:'Series A+', fit:'Lead', rel:'Cold'},
+  {id:'leapfrog', name:'LeapFrog Investments', type:'Impact growth equity', stage:'Growth', fit:'Lead', rel:'Warm'},
+  {id:'partech', name:'Partech Africa', type:'Venture capital', stage:'Seed–Series B', fit:'Co-lead', rel:'Active'},
+  {id:'flourish', name:'Flourish Ventures', type:'Impact venture', stage:'Seed–Series A', fit:'Co-lead', rel:'Active'},
+  {id:'4dx', name:'4DX Ventures', type:'Venture capital', stage:'Seed–Series A', fit:'Co-lead', rel:'Warm'},
+  {id:'novastar', name:'Novastar Ventures', type:'Venture capital', stage:'Seed–Series A', fit:'Co-lead', rel:'Warm'},
+  {id:'helios', name:'Helios Digital Ventures', type:'Venture capital', stage:'Series A–B', fit:'Co-lead', rel:'Cold'},
+  {id:'accion', name:'Accion Venture Lab', type:'Impact venture', stage:'Pre-seed–Seed', fit:'Follow', rel:'Active'},
+  {id:'vp', name:'Ventures Platform', type:'Venture capital', stage:'Pre-seed–Seed', fit:'Follow', rel:'Warm'}
+];
+const QUONA_SLOT = {lead:.40, colead:.25, follow:.10};
+const INV_SLOT = {'Lead':.35, 'Co-lead':.20, 'Follow':.08};
+const REL_CLASS = {Active:'good', Warm:'warn', Cold:'neutral'};
+const SEG_COLORS = ['var(--accent-2)','#5B7F95','#8A6FB0','#C46A4A','#4F9A8A','#B0874A','#6E7F4A'];
+
+const $ = s => document.querySelector(s);
+const store = {
+  get(k, d){ try { const v = localStorage.getItem('afs-'+k); return v ? JSON.parse(v) : d; } catch(e){ return d; } },
+  set(k, v){ try { localStorage.setItem('afs-'+k, JSON.stringify(v)); } catch(e){} }
+};
+const byId = id => COMPANIES.find(c => c.id === id);
+const money = v => '$' + (Math.abs(v) >= 100 ? v.toFixed(0) : Math.abs(v) >= 10 ? v.toFixed(1) : v.toFixed(2).replace(/0$/,'')) + 'M';
+const pct = v => (v*100).toFixed(1) + '%';
+
+// ---- motion helpers
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+let motion = store.get('motion', !reduceMotion);
+const motionOn = () => motion;
+
+// odometer: each digit is a 0–9 column that rolls to its value
+function setOdo(el, value){
+  const text = String(value);
+  el.setAttribute('aria-label', text);
+  let odo = el.querySelector('.odo');
+  const sig = text.replace(/\d/g, '0');
+  if (!odo || odo.dataset.sig !== sig){
+    odo = document.createElement('span');
+    odo.className = 'odo'; odo.dataset.sig = sig; odo.setAttribute('aria-hidden', 'true');
+    for (const ch of text){
+      const s = document.createElement('span');
+      if (/\d/.test(ch)){ s.className = 'odo-col'; s.innerHTML = '0123456789'.split('').map(d => `<span>${d}</span>`).join(''); }
+      else { s.className = 'odo-ch'; s.textContent = ch; }
+      odo.appendChild(s);
+    }
+    el.replaceChildren(odo);
+    void odo.offsetWidth; // start the roll from 0
+  }
+  const cols = odo.querySelectorAll('.odo-col'); let i = 0;
+  for (const ch of text) if (/\d/.test(ch)) cols[i++].style.transform = `translateY(${-ch * 1.15}em)`;
+}
+
+// FLIP: re-render, then spring each element from where it was to where it is
+function flip(container, selector, render, firstOverride){
+  if (!motionOn()){ render(); return; }
+  const first = {};
+  container.querySelectorAll(selector).forEach(el => first[el.dataset.id] = el.getBoundingClientRect());
+  Object.assign(first, firstOverride || {});
+  render();
+  container.querySelectorAll(selector).forEach(el => {
+    const f = first[el.dataset.id]; if (!f) return;
+    const l = el.getBoundingClientRect();
+    const dx = f.left - l.left, dy = f.top - l.top;
+    if (Math.abs(dx) < 1 && Math.abs(dy) < 1) return;
+    el.animate([{transform:`translate(${dx}px,${dy}px) rotate(${f.rot || 0}deg)`}, {transform:'none'}], {duration:560, easing:'cubic-bezier(.3,1.35,.5,1)'});
+  });
+}
+
+// ---- state
+const state = {
+  weights: store.get('weights', {...PRESETS.Balanced}),
+  stages: store.get('stages', {}),
+  sector: 'All', country: 'All', q: '',
+  invFilter: 'All', invQ: '',
+  syn: store.get('syn', {company:'kora', round:12, role:'lead', investors:['tlcom','partech']}),
+  ret: {check:4, post:48, dil:20, rounds:2, exit:250, years:6, pLoss:35, pUp:15}
+};
+COMPANIES.forEach(c => { if (state.stages[c.id]) c.stage = state.stages[c.id]; });
+
+const score = c => {
+  let tw = 0, sum = 0;
+  CRITERIA.forEach(cr => { const w = state.weights[cr.k]; tw += w; sum += w * c.s[cr.k]; });
+  return tw ? Math.round(sum / (tw*5) * 100) : 0;
+};
+const verdict = s => s >= 75 ? {t:'Advance', c:'good'} : s >= 60 ? {t:'Watch', c:'warn'} : {t:'Pass', c:'bad'};
+
+function toast(msg){
+  const t = $('#toast'); t.textContent = msg; t.hidden = false;
+  clearTimeout(toast._t); toast._t = setTimeout(() => t.hidden = true, 1800);
+}
+
+// ---- hero
+function renderHero(){
+  const counts = STAGES.map(s => COMPANIES.filter(c => c.stage === s.k).length);
+  const max = Math.max(...counts, 1);
+  const f = $('#funnel');
+  if (!f.children.length){
+    f.innerHTML = STAGES.map((s,i) =>
+      `<div class="funnel-row"><span>${s.label}</span><div class="track"><div class="bar" style="width:0;--o:${1 - i*0.18}"></div></div><b></b></div>`).join('');
+    void f.offsetWidth;
+  }
+  f.querySelectorAll('.funnel-row').forEach((row, i) => {
+    row.querySelector('.bar').style.width = Math.max(6, counts[i]/max*100) + '%';
+    setOdo(row.querySelector('b'), counts[i]);
+  });
+  const ic = COMPANIES.filter(c => c.stage === 'ic');
+  $('#funnelCaption').textContent = ic.length ? `IC-ready: ${ic.map(c=>c.name).join(', ')}` : 'No company is IC-ready yet.';
+  const scores = COMPANIES.map(score);
+  const avg = Math.round(scores.reduce((a,b)=>a+b,0) / scores.length);
+  const adv = scores.filter(s => s >= 75).length;
+  const markets = new Set(COMPANIES.map(c => c.cc)).size;
+  const k = $('#kpis');
+  if (!k.children.length) k.innerHTML = ['companies tracked','markets covered','average score / 100','scoring 75+ (advance)']
+    .map(l => `<div class="kpi"><b></b><span>${l}</span></div>`).join('');
+  k.querySelectorAll('b').forEach((b, i) => setOdo(b, [COMPANIES.length, markets, avg, adv][i]));
+}
+
+// ---- pipeline
+function renderFilters(){
+  const sectors = ['All', ...new Set(COMPANIES.map(c => c.sector))];
+  $('#secFilter').innerHTML = sectors.map(s => `<button class="chip" aria-pressed="${s===state.sector}" data-s="${s}">${s}</button>`).join('');
+  const ctys = ['All', ...[...new Set(COMPANIES.map(c => c.country))].sort()];
+  $('#ctyFilter').innerHTML = ctys.map(c => `<option value="${c}">${c === 'All' ? 'All countries' : c}</option>`).join('');
+}
+function renderBoard(){
+  const q = state.q.toLowerCase();
+  const list = COMPANIES.filter(c =>
+    (state.sector === 'All' || c.sector === state.sector) &&
+    (state.country === 'All' || c.country === state.country) &&
+    (!q || (c.name + c.sector + c.country).toLowerCase().includes(q)));
+  $('#board').innerHTML = STAGES.map(st => {
+    const items = list.filter(c => c.stage === st.k).sort((a,b) => score(b) - score(a));
+    return `<div class="col" data-stage="${st.k}"><div class="col-head">${st.label}<span>${items.length}</span></div>${
+      items.length ? items.map(c => {
+        const s = score(c), v = verdict(s);
+        return `<button class="card" data-id="${c.id}">
+          <div class="card-top"><span class="card-name">${c.name}</span><span class="score-chip pill ${v.c}">${s}</span></div>
+          <span class="card-meta">${c.cc} · ${c.sector}</span>
+          <div class="card-foot"><span>${c.round}</span><span>${money(c.raise)} raise</span></div>
+        </button>`; }).join('') : '<div class="empty">No companies match.</div>'
+    }</div>`;
+  }).join('');
+}
+
+// ---- detail dialog
+function openDetail(id){
+  const c = byId(id), s = score(c), v = verdict(s);
+  const idx = STAGES.findIndex(x => x.k === c.stage);
+  const next = STAGES[idx+1], prev = STAGES[idx-1];
+  $('#dlgBody').innerHTML = `
+    <div class="dlg-head">
+      <div style="display:grid;gap:4px"><span class="eyebrow">${c.country} · ${c.sector}</span><h2 style="font-size:1.6rem">${c.name}</h2></div>
+      <button class="btn small" data-act="close" aria-label="Close">Close</button>
+    </div>
+    <p style="color:var(--muted)">${c.note}</p>
+    <div class="metrics">
+      <div><span>Round</span><b>${c.round}</b></div>
+      <div><span>Raise / post-money</span><b>${money(c.raise)} / ${money(c.post)}</b></div>
+      <div><span>ARR</span><b>${money(c.arr)}</b></div>
+      <div><span>YoY growth</span><b>${c.growth}%</b></div>
+      <div><span>Stage</span><b>${STAGES[idx].label}</b></div>
+      <div><span>Source</span><b>${c.source}</b></div>
+    </div>
+    <div style="display:grid;gap:8px">
+      ${CRITERIA.map(cr => `<div class="crit"><span>${cr.label}</span><div class="pips">${[1,2,3,4,5].map(n => `<i class="${n <= c.s[cr.k] ? 'on' : ''}" style="--d:${n}"></i>`).join('')}</div><span class="mono">${c.s[cr.k]}/5</span></div>`).join('')}
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;border-top:1px solid var(--line);padding-top:12px">
+      <span>Weighted score <b class="mono">${s}/100</b></span><span class="pill ${v.c}">${v.t}</span>
+    </div>
+    <div class="dlg-actions">
+      ${prev ? `<button class="btn" data-act="move" data-to="${prev.k}">← ${prev.label}</button>` : ''}
+      ${next ? `<button class="btn primary" data-act="move" data-to="${next.k}">Move to ${next.label} →</button>` : ''}
+      <button class="btn" data-act="syn">Build syndicate</button>
+      <button class="btn" data-act="ret">Model returns</button>
+      <button class="btn" data-act="copy">Copy IC summary</button>
+    </div>`;
+  $('#dlgBody').dataset.id = id;
+  const d = $('#dlg'); if (!d.open) d.showModal();
+}
+$('#dlgBody').addEventListener('click', e => {
+  const b = e.target.closest('[data-act]'); if (!b) return;
+  const c = byId($('#dlgBody').dataset.id);
+  const act = b.dataset.act;
+  if (act === 'close') $('#dlg').close();
+  if (act === 'move'){
+    c.stage = b.dataset.to; state.stages[c.id] = c.stage; store.set('stages', state.stages);
+    renderAll(); openDetail(c.id); toast(`${c.name} moved to ${STAGES.find(s=>s.k===c.stage).label}`);
+  }
+  if (act === 'syn'){
+    state.syn.company = c.id; state.syn.round = c.raise; $('#dlg').close(); renderSyndicate();
+    location.hash = 'syndicate'; document.getElementById('syndicate').scrollIntoView();
+  }
+  if (act === 'ret'){
+    loadReturns(c.id); $('#dlg').close(); document.getElementById('returns').scrollIntoView();
+  }
+  if (act === 'copy'){
+    const s = score(c);
+    const text = `${c.name} (${c.country}, ${c.sector})\n${c.round}: raising ${money(c.raise)} at ${money(c.post)} post\nARR ${money(c.arr)}, ${c.growth}% YoY\nScore ${s}/100 (${verdict(s).t})\n` +
+      CRITERIA.map(cr => `- ${cr.label}: ${c.s[cr.k]}/5`).join('\n') + `\n${c.note}`;
+    const fallback = () => { const r = document.createRange(); r.selectNodeContents($('#dlgBody')); const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r); toast('Selected. Press Ctrl+C to copy'); };
+    try { navigator.clipboard.writeText(text).then(() => toast('IC summary copied'), fallback); } catch(err){ fallback(); }
+  }
+});
+$('#dlg').addEventListener('click', e => { if (e.target === $('#dlg')) $('#dlg').close(); });
+
+// ---- scoring
+function renderWeights(){
+  const total = CRITERIA.reduce((a,cr) => a + state.weights[cr.k], 0) || 1;
+  $('#weights').innerHTML = CRITERIA.map(cr => `
+    <div class="w-row">
+      <div class="top"><label for="w-${cr.k}"><b>${cr.label}</b></label><span class="val" id="wv-${cr.k}">${Math.round(state.weights[cr.k]/total*100)}%</span></div>
+      <input type="range" id="w-${cr.k}" data-k="${cr.k}" min="0" max="40" step="5" value="${state.weights[cr.k]}">
+      <span class="desc">${cr.desc}</span>
+    </div>`).join('');
+  markPreset();
+}
+function markPreset(){
+  const name = Object.keys(PRESETS).find(n => CRITERIA.every(cr => PRESETS[n][cr.k] === state.weights[cr.k]));
+  $('#presets').innerHTML = Object.keys(PRESETS).map(n => `<button class="chip" data-preset="${n}" aria-pressed="${n===name}">${n}</button>`).join('');
+}
+function renderRank(){
+  const total = CRITERIA.reduce((a,cr) => a + state.weights[cr.k], 0) || 1;
+  CRITERIA.forEach(cr => { const el = $('#wv-'+cr.k); if (el) el.textContent = Math.round(state.weights[cr.k]/total*100) + '%'; });
+  const rows = COMPANIES.map(c => ({c, s:score(c)})).sort((a,b) => b.s - a.s);
+  $('#rank').innerHTML = rows.map(({c,s}) => {
+    const v = verdict(s);
+    return `<div class="rank-row" data-id="${c.id}" role="button" tabindex="0" aria-label="${c.name}, score ${s}">
+      <span class="rank-name">${c.name}</span>
+      <div class="rank-track"><div class="rank-bar" style="width:${s}%;background:var(--${v.c})"></div><i class="thresh" style="left:60%"></i><i class="thresh" style="left:75%"></i></div>
+      <b>${s}</b></div>`;
+  }).join('');
+  rows.forEach(({c, s}) => {
+    const p = prevRank[c.id];
+    if (p !== undefined && p !== s && motionOn())
+      $(`.rank-row[data-id="${c.id}"] .rank-bar`).animate([{width:p+'%'}, {width:s+'%'}], {duration:500, easing:'cubic-bezier(.16,1,.3,1)'});
+    prevRank[c.id] = s;
+  });
+}
+const prevRank = {};
+
+// ---- investors
+function renderInvestors(){
+  $('#invFilter').innerHTML = ['All','Lead','Co-lead','Follow'].map(f => `<button class="chip" data-f="${f}" aria-pressed="${f===state.invFilter}">${f === 'All' ? 'All roles' : f}</button>`).join('');
+  const q = state.invQ.toLowerCase();
+  const list = INVESTORS.filter(i => (state.invFilter === 'All' || i.fit === state.invFilter) && (!q || (i.name+i.type+i.stage).toLowerCase().includes(q)));
+  $('#invBody').innerHTML = list.length ? list.map(i => {
+    const on = state.syn.investors.includes(i.id);
+    return `<tr class="${on ? 'picked' : ''}">
+      <td><div class="inv-name">${i.name}</div><div class="inv-type">${i.type}</div></td>
+      <td>${i.stage}</td>
+      <td>${i.fit}</td>
+      <td><span class="pill ${REL_CLASS[i.rel]}">${i.rel}</span></td>
+      <td style="text-align:right"><button class="btn small ${on ? 'primary' : ''}" data-inv="${i.id}" aria-pressed="${on}">${on ? 'In syndicate ✓' : '+ Syndicate'}</button></td>
+    </tr>`; }).join('') : `<tr><td colspan="5" class="empty">No investors match.</td></tr>`;
+}
+
+// ---- syndicate
+function renderSyndicate(){
+  const S = state.syn;
+  $('#synCompany').innerHTML = COMPANIES.map(c => `<option value="${c.id}" ${c.id===S.company?'selected':''}>${c.name} · ${c.round}</option>`).join('');
+  $('#synRound').value = S.round; $('#synRoundVal').textContent = money(+S.round);
+  document.querySelectorAll('#synRole button').forEach(b => b.setAttribute('aria-pressed', b.dataset.r === S.role));
+  const round = +S.round;
+  const parts = [{key:'quona', name:'Quona', role:{lead:'Lead',colead:'Co-lead',follow:'Follow'}[S.role], amt: QUONA_SLOT[S.role]*round, color:'var(--accent)'}];
+  S.investors.forEach((id,i) => { const inv = INVESTORS.find(x => x.id === id); if (inv) parts.push({key:id, name:inv.name, role:inv.fit, amt: INV_SLOT[inv.fit]*round, color:SEG_COLORS[i % SEG_COLORS.length]}); });
+  const desired = parts.reduce((a,p) => a + p.amt, 0);
+  const scale = Math.max(round, desired);
+  const gap = Math.max(0, round - desired);
+  renderPaths(parts, gap, byId(S.company));
+  $('#synStack').innerHTML = parts.map(p => `<div style="width:${p.amt/scale*100}%;background:${p.color}" title="${p.name} ${money(p.amt)}">${p.amt/scale > .1 ? p.name.split(' ')[0] : ''}</div>`).join('') +
+    (gap > 0 ? `<div class="gap" style="width:${gap/scale*100}%">${gap/scale > .12 ? 'Gap ' + money(gap) : ''}</div>` : '');
+  $('#synMarker').style.left = (round/scale*100) + '%';
+  $('#synAlloc').innerHTML = parts.map(p => `<tr><td><span class="dot" style="background:${p.color}"></span>${p.name} <span class="inv-type">· ${p.role}</span></td><td class="num">${money(p.amt)}</td></tr>`).join('') +
+    `<tr><td><b>${desired >= round ? 'Oversubscribed by' : 'Still to raise'}</b></td><td class="num"><b>${money(Math.abs(round - desired))}</b></td></tr>`;
+  const hasLead = S.role === 'lead' || S.investors.some(id => INVESTORS.find(x => x.id===id)?.fit === 'Lead');
+  const leads = (S.role === 'lead' ? 1 : 0) + S.investors.filter(id => INVESTORS.find(x => x.id===id)?.fit === 'Lead').length;
+  const co = S.investors.length;
+  const cov = desired / round;
+  const checks = [
+    ['Exactly one lead', leads === 1 ? ['good','Yes'] : leads === 0 ? ['bad','No lead'] : ['warn', leads + ' leads']],
+    ['Two or more co-investors', co >= 2 ? ['good', co + ' added'] : ['warn', co + ' added']],
+    ['Round covered', cov >= 1 ? ['good', Math.round(cov*100) + '%'] : cov >= .75 ? ['warn', Math.round(cov*100) + '%'] : ['bad', Math.round(cov*100) + '%']],
+    ['Quona cheque in $2–8M range', (() => { const q = parts[0].amt; return q >= 2 && q <= 8 ? ['good', money(q)] : ['warn', money(q)]; })()]
+  ];
+  $('#synChecks').innerHTML = checks.map(([l,[c,t]]) => `<div><span>${l}</span><span class="pill ${c}">${t}</span></div>`).join('');
+  store.set('syn', S);
+}
+
+// comet paths: one company, a wire to every participant, a comet travelling each wire
+let prevPathKeys = new Set();
+function renderPaths(parts, gap, company){
+  const rowH = 34, W = 360, lx = 4, lw = 118, rx = 196, rw = 160;
+  const rows = parts.map((p, i) => ({...p, y: 8 + i*rowH + rowH/2}));
+  if (gap > 0) rows.push({key:'gap', gap:true, name:'Still to raise', amt:gap, y: 8 + parts.length*rowH + rowH/2});
+  const H = Math.max(rows.length*rowH + 16, 80), cy = H/2;
+  const trunc = (s, n) => s.length > n ? s.slice(0, n-1) + '…' : s;
+  let wires = '', nodes = '';
+  rows.forEach((p, i) => {
+    const d = `M${lx+lw} ${cy} C ${lx+lw+48} ${cy}, ${rx-48} ${p.y}, ${rx} ${p.y}`;
+    wires += `<path class="wire ${p.gap ? 'dash' : ''}" d="${d}"/>`;
+    if (!p.gap) wires += `<path class="comet" d="${d}" pathLength="100" style="stroke:${p.color};animation-delay:${-i*0.5}s"/>`;
+    const isNew = prevPathKeys.size && !prevPathKeys.has(p.key);
+    nodes += `<g class="rnode ${isNew ? 'new' : ''}">
+      <rect class="${p.gap ? 'gapnode' : 'node-r'}" x="${rx}" y="${p.y-13}" width="${rw}" height="26" rx="13"/>
+      ${p.gap ? '' : `<circle cx="${rx+13}" cy="${p.y}" r="4" style="fill:${p.color}"/>`}
+      <text x="${rx + (p.gap ? 12 : 23)}" y="${p.y+4}">${trunc(p.name, 13)}</text>
+      <text class="amt" x="${rx+rw-10}" y="${p.y+4}" text-anchor="end">${money(p.amt)}</text></g>`;
+  });
+  nodes += `<rect class="node-l" x="${lx}" y="${cy-18}" width="${lw}" height="36" rx="18"/>
+    <text class="node-l-t" x="${lx+lw/2}" y="${cy+4}" text-anchor="middle">${trunc(company.name, 15)}</text>`;
+  const svg = $('#synPaths');
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  svg.innerHTML = wires + nodes;
+  prevPathKeys = new Set(rows.map(r => r.key));
+}
+
+// ---- returns
+function loadReturns(id){
+  const c = byId(id);
+  state.ret.post = c.post; state.ret.check = Math.round(c.raise * QUONA_SLOT[state.syn.role] * 2) / 2 || 0.5;
+  state.ret.exit = Math.round(c.post * 6 / 10) * 10;
+  $('#retCompany').value = id; renderReturnsInputs(); renderReturns();
+}
+function renderReturnsInputs(){
+  const R = state.ret;
+  $('#rCheck').value = R.check; $('#rPost').value = R.post; $('#rDil').value = R.dil;
+  $('#rRounds').value = R.rounds; $('#rExit').value = R.exit; $('#rYears').value = R.years;
+  $('#pLoss').value = R.pLoss; $('#pUp').value = R.pUp;
+}
+function renderReturns(){
+  const R = state.ret;
+  if (R.pLoss + R.pUp > 100) R.pUp = 100 - R.pLoss;
+  const pBase = 100 - R.pLoss - R.pUp;
+  $('#pLossVal').textContent = R.pLoss + '%'; $('#pUpVal').textContent = R.pUp + '%';
+  $('#pBaseNote').textContent = `Base case probability: ${pBase}%`;
+  const entry = Math.min(1, R.check / Math.max(R.post, 0.01));
+  const exitOwn = entry * Math.pow(1 - R.dil/100, R.rounds);
+  const baseProc = exitOwn * R.exit;
+  const mBase = baseProc / R.check, mUp = mBase * 3;
+  const expected = (pBase*mBase + R.pUp*mUp) / 100;
+  const irr = mBase > 0 ? Math.pow(mBase, 1/R.years) - 1 : -1;
+  const eIrr = expected > 0 ? Math.pow(expected, 1/R.years) - 1 : -1;
+  const out = [
+    ['Entry ownership', pct(entry)], ['Ownership at exit', pct(exitOwn)], ['Base proceeds', money(baseProc)],
+    ['Base MOIC', mBase.toFixed(2) + '×'], ['Base IRR', (irr*100).toFixed(0) + '%'], ['Expected MOIC', expected.toFixed(2) + '×', true]
+  ];
+  const og = $('#retOut');
+  if (!og.children.length) og.innerHTML = out.map(([l,,h]) => `<div class="out ${h?'hl':''}"><span>${l}</span><b></b></div>`).join('');
+  og.querySelectorAll('b').forEach((b, i) => setOdo(b, out[i][1]));
+  drawChart([['Write-off', 0, R.pLoss], ['Base', mBase, pBase], ['Upside', mUp, R.pUp], ['Expected', expected, null]], eIrr);
+}
+// bars spring from their last height to the new one
+let chartCur = null, chartRaf = 0;
+const backOut = t => { const c = 1.5; return 1 + (c+1)*Math.pow(t-1, 3) + c*Math.pow(t-1, 2); };
+function drawChart(data, eIrr){
+  const target = data.map(d => d[1]);
+  const from = chartCur || target.map(() => 0);
+  const max = Math.max(...target, 3.5);
+  const step = max <= 6 ? 1 : max <= 14 ? 2 : max <= 30 ? 5 : 10;
+  const top = Math.ceil(max / step) * step;
+  cancelAnimationFrame(chartRaf);
+  const t0 = performance.now(), dur = motionOn() ? 700 : 0;
+  const tick = now => {
+    const t = dur ? Math.min(1, (now - t0) / dur) : 1;
+    const e = backOut(t);
+    chartCur = target.map((v, i) => from[i] + (v - from[i]) * e);
+    paintChart(data.map((d, i) => [d[0], chartCur[i], d[2], d[1]]), eIrr, top, step);
+    if (t < 1) chartRaf = requestAnimationFrame(tick);
+  };
+  tick(t0);
+}
+function paintChart(data, eIrr, top, step){
+  const W = 560, H = 260, L = 44, Rr = 12, T = 22, B = 46;
+  const y = v => T + (H - T - B) * (1 - v/top);
+  const bw = (W - L - Rr) / data.length;
+  let g = '';
+  for (let v = 0; v <= top; v += step) g += `<line class="grid" x1="${L}" x2="${W-Rr}" y1="${y(v)}" y2="${y(v)}"/><text x="${L-8}" y="${y(v)+4}" text-anchor="end">${v}×</text>`;
+  g += `<line class="ref" x1="${L}" x2="${W-Rr}" y1="${y(3)}" y2="${y(3)}"/><text x="${W-Rr}" y="${y(3)-6}" text-anchor="end">3× fund target</text>`;
+  data.forEach(([name, v, p, final], i) => {
+    const x = L + i*bw + bw*0.2, w = bw*0.6, h = Math.max(0, y(0) - y(Math.min(top * 1.06, Math.max(0, v))));
+    g += `<rect class="${name==='Expected' ? 'barx' : 'barv'}" x="${x}" y="${y(0)-h}" width="${w}" height="${Math.max(h, 1.5)}" rx="3"/>`;
+    g += `<text class="barlabel" x="${x+w/2}" y="${y(0)-h-6}" text-anchor="middle">${final.toFixed(1)}×</text>`;
+    g += `<text x="${x+w/2}" y="${H-B+18}" text-anchor="middle">${name}</text>`;
+    g += `<text x="${x+w/2}" y="${H-B+33}" text-anchor="middle">${p === null ? 'IRR ' + (eIrr*100).toFixed(0) + '%' : p + '%'}</text>`;
+  });
+  $('#retChart').innerHTML = g;
+}
+
+// ---- wire up
+function renderAll(boardFirst){
+  renderHero();
+  flip($('#board'), '.card', renderBoard, boardFirst);
+  flip($('#rank'), '.rank-row', renderRank);
+}
+
+// drag physics: cards tilt with velocity and spring into their new column
+let drag = null, suppressClick = false;
+$('#board').addEventListener('pointerdown', e => {
+  const card = e.target.closest('.card');
+  if (!card || e.pointerType === 'touch' || e.button !== 0) return;
+  drag = {card, id:card.dataset.id, x0:e.clientX, y0:e.clientY, px:e.clientX, py:e.clientY, vx:0, rot:0, started:false};
+});
+function dragFrame(){
+  if (!drag || !drag.started) return;
+  drag.vx *= 0.85;
+  drag.rot += (Math.max(-14, Math.min(14, drag.vx * 1.6)) - drag.rot) * 0.2;
+  drag.ghost.style.transform = `translate(${drag.px - drag.x0}px,${drag.py - drag.y0}px) rotate(${drag.rot}deg) scale(1.04)`;
+  requestAnimationFrame(dragFrame);
+}
+window.addEventListener('pointermove', e => {
+  if (!drag) return;
+  if (!drag.started){
+    if (Math.hypot(e.clientX - drag.x0, e.clientY - drag.y0) < 6) return;
+    const r = drag.card.getBoundingClientRect();
+    const g = drag.card.cloneNode(true);
+    g.classList.add('drag-ghost');
+    Object.assign(g.style, {width:r.width+'px', left:r.left+'px', top:r.top+'px'});
+    document.body.appendChild(g);
+    drag.card.classList.add('placeholder');
+    Object.assign(drag, {started:true, ghost:g, r});
+    document.body.style.cursor = 'grabbing';
+    requestAnimationFrame(dragFrame);
+  }
+  drag.vx = drag.vx * 0.5 + (e.clientX - drag.px) * 0.5;
+  drag.px = e.clientX; drag.py = e.clientY;
+  const col = document.elementFromPoint(e.clientX, e.clientY)?.closest('.col');
+  document.querySelectorAll('.col.drop').forEach(c => c !== col && c.classList.remove('drop'));
+  if (col) col.classList.add('drop');
+});
+function endDrag(){
+  if (!drag) return;
+  const d = drag; drag = null;
+  if (!d.started) return;
+  suppressClick = true; setTimeout(() => suppressClick = false, 0);
+  document.body.style.cursor = '';
+  const col = document.querySelector('.col.drop');
+  document.querySelectorAll('.col.drop').forEach(c => c.classList.remove('drop'));
+  const first = {left: d.r.left + d.px - d.x0, top: d.r.top + d.py - d.y0, rot: d.rot};
+  d.ghost.remove();
+  const c = byId(d.id);
+  if (col && col.dataset.stage !== c.stage){
+    c.stage = col.dataset.stage; state.stages[c.id] = c.stage; store.set('stages', state.stages);
+    toast(`${c.name} moved to ${STAGES.find(s => s.k === c.stage).label}`);
+  }
+  renderAll({[d.id]: first});
+}
+window.addEventListener('pointerup', endDrag);
+window.addEventListener('pointercancel', endDrag);
+
+document.addEventListener('click', e => {
+  if (suppressClick) return;
+  const card = e.target.closest('.card[data-id], .rank-row[data-id]'); if (card) openDetail(card.dataset.id);
+  const sc = e.target.closest('#secFilter .chip'); if (sc){ state.sector = sc.dataset.s; document.querySelectorAll('#secFilter .chip').forEach(c => c.setAttribute('aria-pressed', c===sc)); renderBoard(); }
+  const pr = e.target.closest('[data-preset]'); if (pr){ state.weights = {...PRESETS[pr.dataset.preset]}; store.set('weights', state.weights); renderWeights(); renderAll(); }
+  const inf = e.target.closest('#invFilter .chip'); if (inf){ state.invFilter = inf.dataset.f; renderInvestors(); }
+  const inv = e.target.closest('[data-inv]'); if (inv){
+    const id = inv.dataset.inv, S = state.syn;
+    S.investors = S.investors.includes(id) ? S.investors.filter(x => x !== id) : [...S.investors, id];
+    renderInvestors(); renderSyndicate();
+    toast(S.investors.includes(id) ? `${INVESTORS.find(x=>x.id===id).name} added to syndicate` : 'Removed from syndicate');
+  }
+  const role = e.target.closest('#synRole button'); if (role){ state.syn.role = role.dataset.r; renderSyndicate(); }
+});
+document.addEventListener('keydown', e => {
+  if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('.rank-row')){ e.preventDefault(); openDetail(e.target.dataset.id); }
+});
+$('#weights').addEventListener('input', e => {
+  if (!e.target.dataset.k) return;
+  state.weights[e.target.dataset.k] = +e.target.value; store.set('weights', state.weights);
+  markPreset(); renderAll();
+});
+$('#ctyFilter').addEventListener('change', e => { state.country = e.target.value; renderBoard(); });
+$('#coSearch').addEventListener('input', e => { state.q = e.target.value; renderBoard(); });
+$('#invSearch').addEventListener('input', e => { state.invQ = e.target.value; renderInvestors(); });
+$('#synCompany').addEventListener('change', e => { state.syn.company = e.target.value; state.syn.round = byId(e.target.value).raise; renderSyndicate(); });
+$('#synRound').addEventListener('input', e => { state.syn.round = +e.target.value; renderSyndicate(); });
+$('#retCompany').addEventListener('change', e => loadReturns(e.target.value));
+$('#retForm').addEventListener('input', e => {
+  const map = {rCheck:'check', rPost:'post', rDil:'dil', rRounds:'rounds', rExit:'exit', rYears:'years', pLoss:'pLoss', pUp:'pUp'};
+  const k = map[e.target.id]; if (!k) return;
+  const v = parseFloat(e.target.value); if (isNaN(v)) return;
+  state.ret[k] = k === 'years' ? Math.max(1, v) : Math.max(0, v);
+  renderReturns();
+  if (k === 'pLoss' || k === 'pUp') $('#pUp').value = state.ret.pUp;
+});
+
+// theme
+const root = document.documentElement;
+function setPalette(p){
+  if (p === 'baobab') root.removeAttribute('data-palette'); else root.dataset.palette = p;
+  document.querySelectorAll('.swatch').forEach(s => s.setAttribute('aria-pressed', s.dataset.p === p));
+  store.set('palette', p);
+}
+document.querySelectorAll('.swatch').forEach(s => s.addEventListener('click', () => setPalette(s.dataset.p)));
+setPalette(store.get('palette', 'baobab'));
+const MODES = ['Auto','Light','Dark'];
+let mode = 0;
+$('#modeBtn').addEventListener('click', () => {
+  mode = (mode + 1) % 3;
+  if (mode === 0) root.removeAttribute('data-theme'); else root.dataset.theme = MODES[mode].toLowerCase();
+  $('#modeBtn').textContent = MODES[mode];
+});
+
+// motion toggle
+function applyMotion(){
+  root.classList.toggle('still', !motion);
+  $('#motionBtn').textContent = motion ? 'Motion on' : 'Motion off';
+  $('#motionBtn').setAttribute('aria-pressed', motion);
+  store.set('motion', motion);
+}
+$('#motionBtn').addEventListener('click', () => { motion = !motion; applyMotion(); });
+applyMotion();
+
+// slot type: the third word rolls through the system's four jobs
+document.querySelectorAll('[data-mag]').forEach(w => w.innerHTML = [...w.textContent].map(ch => `<span class="mag">${ch}</span>`).join(''));
+const slot = $('#slot'), slotTrack = slot.querySelector('.slot-track');
+let slotI = 0;
+const sizeSlot = () => { slot.style.width = slotTrack.children[slotI].offsetWidth + 'px'; };
+sizeSlot();
+document.fonts?.ready.then(sizeSlot);
+window.addEventListener('resize', sizeSlot);
+setInterval(() => {
+  if (!motionOn() || document.hidden) return;
+  slotI++;
+  slotTrack.style.transform = `translateY(${-slotI * 1.12}em)`;
+  sizeSlot();
+  if (slotI === slotTrack.children.length - 1) setTimeout(() => {
+    slotTrack.style.transition = 'none'; slotI = 0; slotTrack.style.transform = 'translateY(0)';
+    void slotTrack.offsetWidth; slotTrack.style.transition = '';
+  }, 760);
+}, 2600);
+
+// magnetic type: letters near the cursor swell in weight
+const magLetters = [...document.querySelectorAll('.mag')];
+if (matchMedia('(pointer: fine)').matches){
+  let magRaf = 0;
+  const hero = $('header.hero');
+  hero.addEventListener('pointermove', e => {
+    cancelAnimationFrame(magRaf);
+    magRaf = requestAnimationFrame(() => {
+      if (!motionOn()) return;
+      magLetters.forEach(l => {
+        const r = l.getBoundingClientRect();
+        const k = Math.max(0, 1 - Math.hypot(e.clientX - (r.left + r.width/2), e.clientY - (r.top + r.height/2)) / 170);
+        l.style.setProperty('--w', Math.round(640 + 160 * k));
+      });
+    });
+  });
+  hero.addEventListener('pointerleave', () => magLetters.forEach(l => l.style.removeProperty('--w')));
+}
+
+// particle flow: deals drop through the funnel, and the ones that do not advance leak out the sides
+(function flow(){
+  const cv = $('#flow'), box = cv.parentElement, ctx = cv.getContext('2d');
+  let W = 0, H = 0, bars = [], dots = [], color = '#B97C0C', visible = true, frame = 0, last = performance.now(), acc = 0;
+  function measure(){
+    const dpr = window.devicePixelRatio || 1, r = box.getBoundingClientRect();
+    if (Math.round(r.width) !== W || Math.round(r.height) !== H){
+      W = Math.round(r.width); H = Math.round(r.height);
+      cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    bars = [...box.querySelectorAll('.bar')].map(b => { const q = b.getBoundingClientRect(); return {l:q.left - r.left, r:q.right - r.left, t:q.top - r.top, b:q.bottom - r.top}; });
+    color = getComputedStyle(root).getPropertyValue('--accent-2').trim() || color;
+  }
+  function spawn(){
+    const b = bars[0]; if (!b) return;
+    const u = Math.random();
+    dots.push({u, x: b.l + u*(b.r - b.l), y: b.t + 2, vy: 0.55 + Math.random()*0.35, vx: 0, a: 1, row: 0, alive: true});
+  }
+  function step(now){
+    requestAnimationFrame(step);
+    if (!visible || !motionOn() || document.hidden){ if (dots.length){ dots = []; ctx.clearRect(0, 0, W, H); } last = now; return; }
+    const dt = Math.min(3, (now - last) / 16.7); last = now;
+    if (frame++ % 30 === 0) measure();
+    if (!bars.length) return;
+    acc += dt; while (acc > 5){ acc -= 5; if (dots.length < 220) spawn(); }
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = color;
+    const n = bars.length;
+    dots = dots.filter(p => {
+      p.y += p.vy * dt;
+      if (p.alive){
+        const cur = bars[p.row], next = bars[p.row + 1];
+        if (next && p.y > cur.b){
+          const survive = Math.random() < (next.r - next.l) / Math.max(1, cur.r - cur.l);
+          if (survive) p.row++;
+          else { p.alive = false; p.vx = (p.u < 0.5 ? -1 : 1) * (0.6 + Math.random()*0.9); }
+        }
+        const b = bars[p.row];
+        p.x += (b.l + p.u*(b.r - b.l) - p.x) * 0.18 * dt;
+        if (!next && p.y > cur.b) p.a -= 0.06 * dt;
+      } else {
+        p.vy += 0.05 * dt; p.x += p.vx * dt; p.a -= 0.014 * dt;
+      }
+      if (p.a <= 0 || p.y > H + 6) return false;
+      ctx.globalAlpha = Math.max(0, p.a);
+      ctx.beginPath(); ctx.arc(p.x, p.y, 2.2, 0, Math.PI*2); ctx.fill();
+      return true;
+    });
+    ctx.globalAlpha = 1;
+  }
+  if ('IntersectionObserver' in window) new IntersectionObserver(es => { visible = es[0].isIntersecting; }).observe(box);
+  measure();
+  requestAnimationFrame(step);
+})();
+
+// scrollspy
+const links = [...document.querySelectorAll('#navLinks a')];
+if ('IntersectionObserver' in window){
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(en => { if (en.isIntersecting){
+      links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + en.target.id));
+    }});
+  }, {rootMargin:'-40% 0px -55% 0px'});
+  document.querySelectorAll('main section').forEach(s => io.observe(s));
+}
+
+// init
+$('#retCompany').innerHTML = COMPANIES.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+$('#retCompany').value = 'kora';
+renderFilters(); renderWeights(); renderInvestors(); renderSyndicate();
+renderReturnsInputs(); renderReturns(); renderAll();
+})();
+</script>
+
+</body></html>
