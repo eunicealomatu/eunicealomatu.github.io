@@ -253,6 +253,17 @@
     display:flex; flex-wrap:wrap; justify-content:space-between; gap:.5rem;
     font-size:.78rem; color:var(--muted); font-family:var(--font-mono);
   }
+
+  /* Built with Claude */
+  .proj-grid{ display:grid; gap:1.25rem; grid-template-columns:repeat(3,minmax(0,1fr)) }
+  @media (max-width:820px){ .proj-grid{ grid-template-columns:1fr } }
+  .proj{ display:flex; flex-direction:column; gap:.6rem; text-decoration:none; color:inherit; transition:border-color .15s }
+  .proj:hover, .proj:focus-visible{ border-color:var(--accent) }
+  .proj h3{ font-size:1.12rem }
+  .proj p{ font-size:.9rem; color:var(--muted) }
+  .proj .tags{ display:flex; flex-wrap:wrap; gap:.4rem; margin-top:auto; padding-top:.4rem }
+  .proj .tag{ font-family:var(--font-mono); font-size:.7rem; border:1px solid var(--line); border-radius:4px; padding:.15rem .45rem; color:var(--muted) }
+  .proj .open{ font-family:var(--font-mono); font-size:.78rem; color:var(--accent) }
 </style>
 
 <header class="masthead">
@@ -264,6 +275,7 @@
     <nav class="links">
       <a href="#about">Profile</a>
       <a href="#experience">Experience</a>
+      <a href="#projects">Projects</a>
       <a href="#education">Education</a>
       <a href="#skills">Skills</a>
       <a href="#leadership">Leadership</a>
@@ -418,6 +430,39 @@
         </ul>
       </li>
     </ol>
+  </section>
+
+  <section class="wrap" id="projects">
+    <h2>Built with Claude</h2>
+    <p class="lede">Working tools I designed and built with Claude, an AI assistant, drawing on my credit,
+      investment and operations work. Each one runs in the browser; open it and try the examples.</p>
+    <div class="proj-grid">
+      <a class="card proj" href="projects/sme-credit-desk.html">
+        <span class="eyebrow" style="margin:0">Credit analysis</span>
+        <h3>SME Credit Desk</h3>
+        <p>Enter a small business&rsquo;s financials and a proposed loan. It computes DSCR, leverage, liquidity and
+          collateral cover, stress-tests repayment, assigns a 1&ndash;6 risk grade, lists conditions precedent and
+          drafts the credit memo.</p>
+        <div class="tags"><span class="tag">Credit risk</span><span class="tag">Stress testing</span><span class="tag">SME lending</span></div>
+        <span class="open">Open the tool &rarr;</span>
+      </a>
+      <a class="card proj" href="projects/africa-fintech-sourcing.html">
+        <span class="eyebrow" style="margin:0">Venture investing</span>
+        <h3>Africa Fintech Sourcing System</h3>
+        <p>A deal-flow workspace for an African fintech VC: a drag-and-drop pipeline, a weighted six-criteria
+          scoring model, a syndicate builder for co-investors, and a returns model with dilution and exit scenarios.</p>
+        <div class="tags"><span class="tag">VC</span><span class="tag">Scoring model</span><span class="tag">Returns</span></div>
+        <span class="open">Open the tool &rarr;</span>
+      </a>
+      <a class="card proj" href="projects/pharmacy-orders.html">
+        <span class="eyebrow" style="margin:0">Small-business ops</span>
+        <h3>Pharmacy Orders</h3>
+        <p>A phone-first ordering app for a pharmacy in Accra. Customers order ahead and see live stock answers;
+          the pharmacy marks items ready, sends a price, and confirms Mobile Money payments.</p>
+        <div class="tags"><span class="tag">MoMo payments</span><span class="tag">Real-time</span><span class="tag">Ghana</span></div>
+        <span class="open">Open the demo &rarr;</span>
+      </a>
+    </div>
   </section>
 
   <section class="wrap" id="education">
