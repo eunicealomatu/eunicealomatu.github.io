@@ -255,7 +255,7 @@
   }
 
   /* Built with Claude */
-  .proj-grid{ display:grid; gap:1.25rem; grid-template-columns:repeat(3,minmax(0,1fr)) }
+  .proj-grid{ display:grid; gap:1.25rem; grid-template-columns:repeat(2,minmax(0,1fr)) }
   @media (max-width:820px){ .proj-grid{ grid-template-columns:1fr } }
   .proj{ display:flex; flex-direction:column; gap:.6rem; text-decoration:none; color:inherit; transition:border-color .15s }
   .proj:hover, .proj:focus-visible{ border-color:var(--accent) }
@@ -437,6 +437,15 @@
     <p class="lede">Working tools I designed and built with Claude, an AI assistant, drawing on my credit,
       investment and operations work. Each one runs in the browser; open it and try the examples.</p>
     <div class="proj-grid">
+      <a class="card proj" href="servicenow-lrp.html">
+        <span class="eyebrow" style="margin:0">Corporate finance &middot; FP&amp;A</span>
+        <h3>ServiceNow Long-Range Plan</h3>
+        <p>A driver-based five-year plan for ServiceNow built from its SEC filings and tied to FY2026 guidance.
+          Switch between base, upside and downside cases, see which drivers move free cash flow most, and test
+          an investment proposal on NPV, IRR and payback. Includes a formula-driven Excel model.</p>
+        <div class="tags"><span class="tag">Long-range planning</span><span class="tag">SaaS metrics</span><span class="tag">Python &middot; Excel</span></div>
+        <span class="open">Open the model &rarr;</span>
+      </a>
       <a class="card proj" href="sme-credit-desk.html">
         <span class="eyebrow" style="margin:0">Credit analysis</span>
         <h3>SME Credit Desk</h3>

@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ServiceNow Long-Range Plan | Eunice Alomatu</title>
+<meta name="description" content="Driver-based five-year financial plan for ServiceNow with scenarios, sensitivities and an investment-proposal evaluator.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#EEF1EF; --card:#FFFFFF; --soft:#E3E9E6; --ink:#121D22; --ink2:#53666B; --muted:#6B7C80;
+  --accent:#7C5A24; --accent-soft:#E9DEC6; --line:#D2D9D6;
+  --shadow:0 1px 2px rgba(18,29,34,.06), 0 8px 24px rgba(18,29,34,.05);
+  --base:#2a78d6; --up:#1a9e75; --down:#eb6834; --hist:#53666B;
+  --font-display:'Source Serif 4','Iowan Old Style',Georgia,serif;
+  --font-body:'IBM Plex Sans','Segoe UI',system-ui,sans-serif;
+  --font-mono:'IBM Plex Mono','SFMono-Regular',Menlo,Consolas,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){--bg:#0D1416;--card:#141E21;--soft:#1B2729;--ink:#E9EEEC;--ink2:#96A8AA;--muted:#7F9294;
+    --accent:#D0A75B;--accent-soft:#3A2F1C;--line:#283436;--shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.35);
+    --base:#3987e5;--up:#199e70;--down:#d95926;--hist:#96A8AA;color-scheme:dark}
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:var(--font-body);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:var(--font-display);font-weight:600;text-wrap:balance}
+.wrap{max-width:60rem;margin:0 auto;padding-inline:1.5rem}
+a{color:var(--base)}
+header.masthead{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.masthead-inner{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding-block:.75rem}
+.monogram{display:flex;align-items:center;gap:.6rem;font-family:var(--font-display);font-weight:600;font-size:1rem;white-space:nowrap;text-decoration:none;color:inherit}
+.monogram-mark{width:2rem;height:2rem;border-radius:50%;overflow:hidden;flex:none;background:var(--ink)}
+.monogram-mark img{width:100%;height:100%;object-fit:cover;display:block}
+nav.links{display:flex;gap:1.25rem;font-size:.86rem}
+nav.links a{text-decoration:none;color:var(--ink2);white-space:nowrap;border-bottom:2px solid transparent;padding-block:.25rem}
+nav.links a:hover{color:var(--ink);border-color:var(--accent)}
+@media (max-width:560px){nav.links .hide-sm{display:none}}
+.hero{padding:48px 0 24px}
+.eyebrow{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+h1{font-size:clamp(30px,5vw,44px);line-height:1.15;margin:8px 0 14px;letter-spacing:-.01em}
+.lede{font-size:18px;color:var(--ink2);max-width:760px;margin:0}
+.btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+.btn{display:inline-block;padding:.55rem 1rem;border-radius:999px;font-family:var(--font-mono);font-weight:500;font-size:.82rem;text-decoration:none;border:1px solid var(--line);color:var(--ink);background:var(--card)}
+.btn.primary{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.btn:hover{border-color:var(--accent)}
+.tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+.tag{font-family:var(--font-mono);font-size:.7rem;border:1px solid var(--line);border-radius:4px;padding:.15rem .45rem;color:var(--ink2)}
+section{padding:28px 0}
+h2{font-size:1.5rem;margin:0 0 .4rem;display:flex;align-items:baseline;gap:.75rem}
+h2::after{content:"";flex:1;height:1px;background:var(--line)}
+.sub{color:var(--ink2);margin:0 0 18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:1.25rem;box-shadow:var(--shadow)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--card)}
+.seg button{all:unset;cursor:pointer;padding:8px 16px;font-family:var(--font-mono);font-size:.82rem;color:var(--ink2);display:flex;align-items:center;gap:8px}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed="true"]{background:var(--soft);color:var(--ink)}
+.seg button:focus-visible{outline:2px solid var(--base);outline-offset:-2px}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:16px}
+@media (max-width:760px){.kpis{grid-template-columns:repeat(2,1fr)}}
+.kpi .lab{font-size:13px;color:var(--ink2)}
+.kpi .val{font-family:var(--font-mono);font-variant-numeric:tabular-nums;font-size:1.6rem;font-weight:500;color:var(--accent);margin-top:2px}
+.kpi .chg{font-size:13px;color:var(--muted)}
+.thesis{margin-top:14px;color:var(--ink2);font-size:15px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:820px){.grid2{grid-template-columns:1fr}}
+.chart-title{font-family:var(--font-display);font-weight:600;font-size:1.05rem;margin:0 0 2px}
+.chart-sub{font-size:13px;color:var(--muted);margin:0 0 8px}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--ink2);margin-bottom:6px}
+.legend span{display:flex;align-items:center;gap:6px}
+.legend i{width:16px;height:2px;display:inline-block}
+svg{display:block;width:100%;height:auto;overflow:visible;font-family:var(--font-mono)}
+.tip{position:fixed;pointer-events:none;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:13px;box-shadow:0 4px 16px rgba(0,0,0,.12);opacity:0;transition:opacity .1s;z-index:10;min-width:150px}
+.tip b{display:block;margin-bottom:4px}
+.tip .row{display:flex;justify-content:space-between;gap:14px}
+.findings{counter-reset:f;list-style:none;padding:0;margin:0;display:grid;gap:12px}
+.findings li{counter-increment:f;padding:16px 16px 16px 56px;position:relative}
+.findings li::before{content:counter(f);position:absolute;left:16px;top:15px;width:28px;height:28px;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-family:var(--font-mono);display:grid;place-items:center;font-size:13px}
+.findings b{display:block;margin-bottom:2px;font-family:var(--font-display);font-size:1.05rem;font-weight:600}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th,td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:right;font-variant-numeric:tabular-nums}
+th:first-child,td:first-child{text-align:left}
+th{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink2);font-weight:500}
+.tablewrap{overflow-x:auto}
+.ok{color:var(--up);font-weight:600}
+.verdict{display:inline-block;padding:4px 10px;border-radius:6px;background:var(--accent-soft);color:var(--accent);font-family:var(--font-mono);font-size:.82rem}
+.method{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media (max-width:820px){.method{grid-template-columns:1fr}}
+.method h3{font-size:1.05rem;margin:0 0 6px}
+.method p{margin:0;color:var(--ink2);font-size:15px}
+code{font-size:13px;background:var(--soft);padding:1px 6px;border-radius:4px}
+pre{background:var(--soft);padding:14px;border-radius:10px;overflow-x:auto;font-size:13px;line-height:1.55;margin:0}
+footer{border-top:1px solid var(--line);background:var(--card);padding:2rem 0 2.5rem;margin-top:2rem;color:var(--ink2);font-size:.8rem}
+.srclist{margin:6px 0 0;padding-left:18px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+</style>
+</head>
+<body>
+<header class="masthead"><div class="wrap masthead-inner">
+  <a href="index.html" class="monogram"><span class="monogram-mark"><img src="headshot.jpg" alt=""></span><span>Eunice Alomatu</span></a>
+  <nav class="links">
+    <a href="index.html#projects">&larr; All projects</a>
+    <a class="hide-sm" href="https://github.com/eunicealomatu/servicenow-lrp-model">Code on GitHub</a>
+  </nav>
+</div></header>
+
+<main class="wrap">
+<div class="hero">
+  <p class="eyebrow">Corporate finance &middot; Long-range planning</p>
+  <h1>ServiceNow five-year plan: can AI growth outrun seat pressure?</h1>
+  <p class="lede">A driver-based long-range plan for ServiceNow (NYSE: NOW), built from its public filings. It forecasts revenue, margins, opex, headcount, cash flow and SaaS metrics for FY2026&ndash;FY2030 under three scenarios, tests which assumptions matter most, and evaluates an investment proposal against the plan.</p>
+  <div class="btns">
+    <a class="btn primary" href="https://github.com/eunicealomatu/servicenow-lrp-model/raw/main/outputs/ServiceNow_LRP_Model.xlsx">Download the Excel model</a>
+    <a class="btn" href="https://github.com/eunicealomatu/servicenow-lrp-model">Python code &amp; README</a>
+  </div>
+  <div class="tags"><span class="tag">Integrated 3-statement drivers</span><span class="tag">Scenario &amp; sensitivity analysis</span><span class="tag">NPV / IRR / payback</span><span class="tag">SaaS metrics</span><span class="tag">Python &middot; Excel</span></div>
+</div>
+
+<section aria-labelledby="explore">
+  <h2 id="explore">Explore the scenarios</h2>
+  <p class="sub">FY2030 outputs. FY2026 is anchored to company guidance and identical in every case; scenarios diverge from FY2027.</p>
+  <div class="seg" role="group" aria-label="Scenario">
+    <button data-s="base" aria-pressed="true"><span class="dot" style="background:var(--base)"></span>Base</button>
+    <button data-s="upside" aria-pressed="false"><span class="dot" style="background:var(--up)"></span>Upside</button>
+    <button data-s="downside" aria-pressed="false"><span class="dot" style="background:var(--down)"></span>Downside</button>
+  </div>
+  <div class="kpis" id="kpis"></div>
+  <p class="thesis" id="thesis"></p>
+</section>
+
+<section aria-labelledby="charts">
+  <h2 id="charts" class="sr">Charts</h2>
+  <div class="grid2">
+    <div class="card">
+      <p class="chart-title">Total revenue</p><p class="chart-sub">$ billions &middot; FY2023&ndash;25 actual, FY2026&ndash;30 forecast</p>
+      <div class="legend" aria-hidden="true"><span><i style="background:var(--hist)"></i>Actual</span><span><i style="background:var(--base)"></i>Base</span><span><i style="background:var(--up)"></i>Upside</span><span><i style="background:var(--down)"></i>Downside</span></div>
+      <div id="c-rev"></div>
+    </div>
+    <div class="card">
+      <p class="chart-title">Free cash flow margin</p><p class="chart-sub">% of revenue</p>
+      <div class="legend" aria-hidden="true"><span><i style="background:var(--hist)"></i>Actual</span><span><i style="background:var(--base)"></i>Base</span><span><i style="background:var(--up)"></i>Upside</span><span><i style="background:var(--down)"></i>Downside</span></div>
+      <div id="c-fcf"></div>
+    </div>
+  </div>
+</section>
+
+<section aria-labelledby="find">
+  <h2 id="find">What the plan says</h2>
+  <p class="sub">Conclusions first; the model is how I got there.</p>
+  <ol class="findings">
+    <li class="card"><b>Growth is the decision that matters.</b>Two points of subscription growth a year, up or down, moves FY2030 free cash flow by roughly &plusmn;$950M, more than twice any single cost lever tested. The central planning question is whether AI products grow faster than AI shrinks seat-based licences.</li>
+    <li class="card"><b>Margin expansion comes from operating leverage, led by sales &amp; marketing.</b>Base-case non-GAAP operating margin rises ~270&nbsp;bp from FY2026&rsquo;s guided 31.5% to 34.2% by FY2030. Opex falls 4.6 points as a share of revenue, 2.9 of them in sales &amp; marketing.</li>
+    <li class="card"><b>FCF margin stays flat even as operating margin rises.</b>Working-capital inflows from upfront billing grow more slowly than revenue as growth decelerates, and cash taxes rise. A plan that promises both slowing growth and rising FCF margin needs a reason.</li>
+    <li class="card"><b>AI productivity reshapes the headcount plan.</b>The upside case reaches ~$2.1B more revenue than base with slightly <em>fewer</em> employees, because revenue per employee compounds faster.</li>
+  </ol>
+</section>
+
+<section aria-labelledby="sens">
+  <h2 id="sens">What moves free cash flow</h2>
+  <p class="sub">Each driver shifted up and down in FY2027&ndash;30, one at a time. Base-case FY2030 FCF: <b id="tb"></b>.</p>
+  <div class="card"><div id="c-tor"></div></div>
+</section>
+
+<section aria-labelledby="guide">
+  <h2 id="guide">Tied to the operating plan</h2>
+  <p class="sub">A long-range plan is only credible if year one matches guidance. FY2026 vs. ServiceNow&rsquo;s Q3 2026 guidance:</p>
+  <div class="card tablewrap"><table>
+    <thead><tr><th>FY2026</th><th>Model</th><th>Guidance</th><th>Tie</th></tr></thead>
+    <tbody>
+      <tr><td>Subscription revenue</td><td>$15,786M</td><td>$15,780&ndash;15,790M</td><td class="ok">&#10003;</td></tr>
+      <tr><td>Subscription gross margin (GAAP)</td><td>75.0%</td><td>75%</td><td class="ok">&#10003;</td></tr>
+      <tr><td>GAAP operating margin</td><td>10.0%</td><td>10%</td><td class="ok">&#10003;</td></tr>
+      <tr><td>Non-GAAP operating margin</td><td>31.5%</td><td>31.5%</td><td class="ok">&#10003;</td></tr>
+      <tr><td>Free cash flow margin</td><td>36.0%</td><td>36%</td><td class="ok">&#10003;</td></tr>
+    </tbody></table></div>
+</section>
+
+<section aria-labelledby="inv">
+  <h2 id="inv">Evaluating an investment proposal</h2>
+  <p class="sub">Illustrative case: fund an AI go-to-market team in FY2027&ndash;28 to accelerate AI product attach. Inputs are assumptions, not ServiceNow data.</p>
+  <div class="grid2">
+    <div class="card"><div id="c-inv"></div></div>
+    <div class="card">
+      <div class="tablewrap"><table><tbody id="invt"></tbody></table></div>
+      <p style="margin:14px 0 6px"><span class="verdict">Recommendation: stage-gate</span></p>
+      <p style="margin:0;color:var(--ink2);font-size:15px">NPV is positive, but almost all of it sits in the terminal value and payback misses a four-year hurdle. Fund the first tranche; release the second only if AI attach rates hit target.</p>
+    </div>
+  </div>
+</section>
+
+<section aria-labelledby="how">
+  <h2 id="how">How the model works</h2>
+  <p class="sub">Every forecast line is a reported figure or one driver applied to another line. No hidden plugs.</p>
+  <div class="method">
+    <div class="card"><h3>Revenue &amp; SaaS metrics</h3><p>Subscription revenue grows at a scenario growth rate; cRPO is tied to subscription revenue; Rule of 40 = growth + FCF margin.</p></div>
+    <div class="card"><h3>Margins &amp; opex</h3><p>GAAP gross margin and S&amp;M, R&amp;D, G&amp;A as % of revenue; non-GAAP adds back stock comp and acquisition amortization.</p></div>
+    <div class="card"><h3>Cash &amp; headcount</h3><p>Cash flow builds from non-GAAP operating income, cash taxes, deferred-revenue inflows and capex; headcount = revenue &divide; revenue per employee.</p></div>
+  </div>
+  <div style="margin-top:12px"><pre>Free cash flow = non-GAAP operating income − cash taxes
+               + working-capital inflow + net interest − capex</pre></div>
+  <p style="color:var(--ink2);font-size:15px;margin-top:14px">The plan exists in Python and as a formula-driven Excel workbook; an automated check confirms the two agree in every scenario, and 13 tests confirm historicals tie to filings. I used Claude as a coding and drafting partner and verified every number against ServiceNow&rsquo;s filings.</p>
+</section>
+</main>
+
+<footer><div class="wrap">
+  Independent analysis from public information; not affiliated with or endorsed by ServiceNow. Forecasts are illustrative.
+  <ul class="srclist">
+    <li><a href="https://www.sec.gov/Archives/edgar/data/0001373715/000137371526000092/erq3fy26.htm">ServiceNow Q3 2026 earnings release (Form 8-K)</a></li>
+    <li><a href="https://s205.q4cdn.com/916135447/files/doc_financials/2025/q4/ServiceNow-Reports-Fourth-Quarter-and-Full-Year-2025-Financial-Results.pdf">Q4 &amp; FY2025 earnings release</a></li>
+    <li><a href="https://www.businesswire.com/news/home/20240124662293/en/ServiceNow-Reports-Fourth-Quarter-and-Full-Year-2023-Financial-Results">Q4 &amp; FY2023 earnings release</a></li>
+  </ul>
+</div></footer>
+
+<div class="tip" id="tip" role="tooltip"></div>
+
+<script>
+const D = {"years":[2023,2024,2025,2026,2027,2028,2029,2030],"scen":{"base":{"total_rev":[8971.0,10984.0,13278.0,16220.0399,19254.0525,22672.8559,26481.6294,30674.9025],"sub_rev":[8680.0,10646.0,12883.0,15785.5399,18784.7925,22166.0551,25934.2845,30083.77],"sub_growth":[null,0.2265,0.2101,0.2253,0.19,0.18,0.17,0.16],"gross_margin":[0.7859,0.7918,0.7753,0.7272,0.7395,0.751,0.7573,0.7634],"gaap_om":[0.0849,0.1242,0.1374,0.1002,0.1225,0.146,0.1653,0.1824],"ng_om":[0.28,0.295,0.31,0.3152,0.3225,0.331,0.3353,0.3424],"fcf":[2728.0,3455.0,4636.0,5844.5614,6699.631,7915.8856,9174.7625,10613.5917],"fcf_margin":[0.3041,0.3145,0.3491,0.3603,0.348,0.3491,0.3465,0.346],"headcount":[22668.0,26293.0,29187.0,33012.9973,36624.4753,40306.1866,44412.408,48532.9783],"rev_per_emp":[395.7561,417.7538,454.9286,491.3228,525.7154,562.5155,596.2665,632.0424],"crpo":[8600.0,null,12850.0,15627.6845,18596.9446,21944.3946,25674.9417,29782.9323],"rule_of_40":[null,0.541,0.5593,0.5856,0.538,0.5291,0.5165,0.506],"sm":[3301.0,3854.0,4388.0,5255.2929,6122.7887,7028.5853,7997.4521,9049.0962],"rd":[2124.0,2543.0,2960.0,3681.9491,4332.1618,5056.0469,5825.9585,6687.1287],"ga":[863.0,936.0,1123.0,1232.723,1424.7999,1632.4456,1853.7141,2085.8934]},"upside":{"total_rev":[8971.0,10984.0,13278.0,16220.0399,19578.4533,23446.3489,27853.8382,32821.2635],"sub_rev":[8680.0,10646.0,12883.0,15785.5399,19100.5033,22920.6039,27275.5187,32185.112],"sub_growth":[null,0.2265,0.2101,0.2253,0.21,0.2,0.19,0.18],"gross_margin":[0.7859,0.7918,0.7753,0.7272,0.7446,0.7563,0.7677,0.7737],"gaap_om":[0.0849,0.1242,0.1374,0.1002,0.1366,0.1673,0.1947,0.2167],"ng_om":[0.28,0.295,0.31,0.3152,0.3346,0.3483,0.3587,0.3687],"fcf":[2728.0,3455.0,4636.0,5844.5614,7232.872,8816.2556,10567.9704,12512.5056],"fcf_margin":[0.3041,0.3145,0.3491,0.3603,0.3694,0.376,0.3794,0.3812],"headcount":[22668.0,26293.0,29187.0,33012.9973,36558.2097,40165.6932,44181.5894,48204.5272],"rev_per_emp":[395.7561,417.7538,454.9286,491.3228,535.5419,583.7407,630.4399,680.8751],"crpo":[8600.0,null,12850.0,15627.6845,19100.5033,22920.6039,27275.5187,32185.112],"rule_of_40":[null,0.541,0.5593,0.5856,0.5794,0.576,0.5694,0.5612],"sm":[3301.0,3854.0,4388.0,5255.2929,6108.4774,7033.9047,8077.6131,9189.9538],"rd":[2124.0,2543.0,2960.0,3681.9491,4385.5735,5158.1968,6044.2829,7023.7504],"ga":[863.0,936.0,1123.0,1232.723,1409.6486,1617.7981,1838.3533,2067.7396]},"downside":{"total_rev":[8971.0,10984.0,13278.0,16220.0399,18767.4513,21253.1536,23657.3237,25989.1755],"sub_rev":[8680.0,10646.0,12883.0,15785.5399,18311.2263,20783.2418,23173.3146,25490.6461],"sub_growth":[null,0.2265,0.2101,0.2253,0.16,0.135,0.115,0.1],"gross_margin":[0.7859,0.7918,0.7753,0.7272,0.7342,0.741,0.7473,0.7533],"gaap_om":[0.0849,0.1242,0.1374,0.1002,0.1022,0.114,0.1273,0.1393],"ng_om":[0.28,0.295,0.31,0.3152,0.3072,0.306,0.3073,0.3123],"fcf":[2728.0,3455.0,4636.0,5844.5614,5943.9526,6462.0158,6978.9901,7575.259],"fcf_margin":[0.3041,0.3145,0.3491,0.3603,0.3167,0.304,0.295,0.2915],"headcount":[22668.0,26293.0,29187.0,33012.9973,36378.8559,39235.3762,41993.9488,44358.8484],"rev_per_emp":[395.7561,417.7538,454.9286,491.3228,515.889,541.6834,563.3508,585.8848],"crpo":[8600.0,null,12850.0,15627.6845,17761.8895,19951.9122,22246.3821,24471.0203],"rule_of_40":[null,0.541,0.5593,0.5856,0.4767,0.439,0.41,0.3915],"sm":[3301.0,3854.0,4388.0,5255.2929,6118.1891,6843.5155,7523.029,8186.5903],"rd":[2124.0,2543.0,2960.0,3681.9491,4316.5138,4888.2253,5393.8698,5873.5537],"ga":[863.0,936.0,1123.0,1232.723,1426.3263,1593.9865,1750.642,1897.2098]}},"tornado":[{"d":"sub_growth","lab":"Subscription revenue growth","s":0.02,"lo":9702,"hi":11583},{"d":"wc_capture","lab":"Working capital inflow, % of revenue increase","s":0.1,"lo":10194,"hi":11033},{"d":"sm_pct","lab":"Sales & marketing, % of revenue (GAAP)","s":0.015,"lo":11009,"hi":10218},{"d":"cash_tax_rate","lab":"Cash taxes, % of non-GAAP operating income","s":0.03,"lo":10929,"hi":10298},{"d":"capex_pct","lab":"Capex, % of revenue","s":0.01,"lo":10920,"hi":10307},{"d":"rd_pct","lab":"R&D, % of revenue (GAAP)","s":0.01,"lo":10877,"hi":10350},{"d":"sub_gm","lab":"Subscription gross margin (GAAP)","s":0.01,"lo":10355,"hi":10872}],"tornado_base":10614,"inv":{"npv":3515,"pvt":3406,"irr":0.1908,"pb":4.09,"fcf":[-282.0,-154.0,160.0,247.7,305.3],"years":[2027,2028,2029,2030,2031]}};
+const NAMES = {base:"Base", upside:"Upside", downside:"Downside"};
+const THESIS = {
+  base:"Growth glides from ~22% to 16% as the installed base matures; AI products offset seat-pricing pressure; acquisition amortization fades and sales efficiency improves.",
+  upside:"Agentic AI monetizes faster than seats decline: growth holds near 18–20% and AI-driven productivity lifts revenue per employee faster.",
+  downside:"AI agents shrink seats and pricing faster than new products replace them; growth slows to 10% and margins stall as management protects investment."
+};
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const COL = {base:"--base", upside:"--up", downside:"--down"};
+const yi = y => D.years.indexOf(y);
+const fm = v => "$" + (v/1000).toFixed(1) + "B";
+const fp = v => (v*100).toFixed(1) + "%";
+const fk = v => (v/1000).toFixed(1) + "K";
+let current = "base";
+
+function renderKpis(){
+  const s = D.scen[current], i30 = yi(2030), i25 = yi(2025);
+  const cagr = (a,b) => ((b/a)**(1/5)-1);
+  const k = [
+    ["Revenue FY2030", fm(s.total_rev[i30]), (cagr(s.total_rev[i25],s.total_rev[i30])*100).toFixed(1)+"% CAGR from FY25"],
+    ["Free cash flow FY2030", fm(s.fcf[i30]), fp(s.fcf_margin[i30])+" margin"],
+    ["Non-GAAP op. margin", fp(s.ng_om[i30]), ((s.ng_om[i30]-s.ng_om[i25])*1e4).toFixed(0)+" bp vs FY25"],
+    ["Headcount FY2030", fk(s.headcount[i30]), "$"+Math.round(s.rev_per_emp[i30])+"K revenue / employee"],
+  ];
+  document.getElementById("kpis").innerHTML = k.map(([l,v,c]) =>
+    `<div class="card kpi"><div class="lab">${l}</div><div class="val">${v}</div><div class="chg">${c}</div></div>`).join("");
+  document.getElementById("thesis").textContent = NAMES[current] + " case: " + THESIS[current];
+}
+
+const tip = document.getElementById("tip");
+function showTip(html, ev){
+  tip.innerHTML = html; tip.style.opacity = 1;
+  const x = Math.min(ev.clientX + 14, window.innerWidth - tip.offsetWidth - 8);
+  tip.style.left = x + "px"; tip.style.top = (ev.clientY + 14) + "px";
+}
+function hideTip(){ tip.style.opacity = 0; }
+
+function lineChart(el, key, fmt, axisFmt){
+  const W=480,H=270,m={l:46,r:14,t:10,b:28};
+  const xs = D.years, n = xs.length;
+  const all = []; for (const s in D.scen) D.scen[s][key].forEach(v => v!=null && all.push(v));
+  let lo = Math.min(...all), hi = Math.max(...all); const pad=(hi-lo)*.08; lo-=pad; hi+=pad;
+  const X = i => m.l + i*(W-m.l-m.r)/(n-1);
+  const Y = v => m.t + (hi-v)*(H-m.t-m.b)/(hi-lo);
+  const ticks = 5, line = css("--line"), muted = css("--muted");
+  let g = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${key} by scenario">`;
+  for (let t=0;t<ticks;t++){ const v = lo + (hi-lo)*t/(ticks-1);
+    g += `<line x1="${m.l}" x2="${W-m.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="${line}"/>`+
+         `<text x="${m.l-6}" y="${Y(v)+4}" font-size="11" text-anchor="end" fill="${muted}">${axisFmt(v)}</text>`; }
+  xs.forEach((y,i)=> g += `<text x="${X(i)}" y="${H-8}" font-size="11" text-anchor="middle" fill="${muted}">FY${String(y).slice(2)}</text>`);
+  const xb = (X(yi(2025))+X(yi(2026)))/2;
+  g += `<line x1="${xb}" x2="${xb}" y1="${m.t}" y2="${H-m.b}" stroke="${line}" stroke-dasharray="3 3"/>`;
+  const path = (s, from, to) => { const v = D.scen[s][key]; let d="";
+    for (let i=from;i<=to;i++){ if(v[i]==null) continue; d += (d?"L":"M")+X(i)+","+Y(v[i]); } return d; };
+  const i25 = yi(2025);
+  const order = ["downside","upside","base"].filter(s=>s!==current).concat([current]);
+  order.forEach(s => {
+    const w = s===current?3:2, op = s===current?1:.45;
+    g += `<path d="${path(s,i25,n-1)}" fill="none" stroke="${css(COL[s])}" stroke-width="${w}" opacity="${op}" ${s==="base"?"":'stroke-dasharray="6 4"'} stroke-linejoin="round"/>`;
+  });
+  g += `<path d="${path("base",0,i25)}" fill="none" stroke="${css("--hist")}" stroke-width="2.5"/>`;
+  const v = D.scen[current][key];
+  g += `<circle cx="${X(n-1)}" cy="${Y(v[n-1])}" r="5" fill="${css(COL[current])}" stroke="${css("--card")}" stroke-width="2"/>`;
+  g += `<line class="xh" x1="0" x2="0" y1="${m.t}" y2="${H-m.b}" stroke="${muted}" opacity="0"/>`;
+  g += `<rect x="${m.l}" y="${m.t}" width="${W-m.l-m.r}" height="${H-m.t-m.b}" fill="transparent" class="hit"/>`;
+  g += `</svg>`;
+  el.innerHTML = g;
+  const svg = el.querySelector("svg"), hit = svg.querySelector(".hit"), xh = svg.querySelector(".xh");
+  hit.addEventListener("mousemove", ev => {
+    const r = svg.getBoundingClientRect(), px = (ev.clientX - r.left) * W / r.width;
+    const i = Math.max(0, Math.min(n-1, Math.round((px - m.l)/((W-m.l-m.r)/(n-1)))));
+    xh.setAttribute("x1",X(i)); xh.setAttribute("x2",X(i)); xh.setAttribute("opacity",.5);
+    const y = xs[i];
+    let h = `<b>FY${y}${y<=2025?" actual":" forecast"}</b>`;
+    if (y<=2025) h += `<div class="row"><span>Actual</span><span>${D.scen.base[key][i]==null?"–":fmt(D.scen.base[key][i])}</span></div>`;
+    else ["base","upside","downside"].forEach(s => h += `<div class="row"><span><span class="dot" style="background:${css(COL[s])}"></span> ${NAMES[s]}</span><span>${fmt(D.scen[s][key][i])}</span></div>`);
+    showTip(h, ev);
+  });
+  hit.addEventListener("mouseleave", () => { hideTip(); xh.setAttribute("opacity",0); });
+}
+
+function tornado(){
+  const el = document.getElementById("c-tor"), t = D.tornado, base = D.tornado_base;
+  document.getElementById("tb").textContent = "$" + base.toLocaleString() + "M";
+  const short = {sub_growth:"Subscription growth",wc_capture:"Working capital capture",sm_pct:"Sales & marketing % rev",cash_tax_rate:"Cash tax rate",capex_pct:"Capex % rev",rd_pct:"R&D % rev",sub_gm:"Subscription gross margin"};
+  const W=900,rowH=34,m={l:230,r:60,t:6,b:30}, H = m.t + t.length*rowH + m.b;
+  const ext = Math.max(...t.map(r => Math.max(Math.abs(r.lo-base), Math.abs(r.hi-base)))) * 1.05;
+  const X = v => m.l + (v+ext)*(W-m.l-m.r)/(2*ext);
+  const ink = css("--ink2"), muted = css("--muted"), line = css("--line");
+  let g = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Sensitivity of FY2030 free cash flow">`;
+  [-1000,-500,0,500,1000].forEach(v => { if (Math.abs(v)>ext) return;
+    g += `<line x1="${X(v)}" x2="${X(v)}" y1="${m.t}" y2="${H-m.b}" stroke="${v===0?css("--ink"):line}"/>`+
+         `<text x="${X(v)}" y="${H-10}" font-size="12" text-anchor="middle" fill="${muted}">${v>0?"+":""}${v===0?"0":"$"+v+"M"}</text>`; });
+  t.forEach((r,i) => {
+    const y = m.t + i*rowH + 6, h = rowH - 12;
+    const neg = Math.min(r.lo,r.hi)-base, pos = Math.max(r.lo,r.hi)-base;
+    g += `<text x="${m.l-10}" y="${y+h/2+4}" font-size="13" text-anchor="end" fill="${ink}">${short[r.d]||r.lab}  ±${(r.s*100).toFixed(1)} pts</text>`;
+    g += `<rect class="tb" data-i="${i}" x="${X(neg)}" y="${y}" width="${X(0)-X(neg)-1}" height="${h}" rx="3" fill="${css("--down")}"/>`;
+    g += `<rect class="tb" data-i="${i}" x="${X(0)+1}" y="${y}" width="${X(pos)-X(0)-1}" height="${h}" rx="3" fill="${css("--base")}"/>`;
+  });
+  g += `</svg>`;
+  el.innerHTML = g;
+  el.querySelectorAll(".tb").forEach(b => {
+    b.addEventListener("mousemove", ev => { const r = t[+b.dataset.i];
+      showTip(`<b>${short[r.d]||r.lab} ±${(r.s*100).toFixed(1)} pts</b><div class="row"><span>Unfavourable</span><span>$${Math.min(r.lo,r.hi).toLocaleString()}M</span></div><div class="row"><span>Favourable</span><span>$${Math.max(r.lo,r.hi).toLocaleString()}M</span></div>`, ev); });
+    b.addEventListener("mouseleave", hideTip);
+  });
+}
+
+function invChart(){
+  const el = document.getElementById("c-inv"), I = D.inv;
+  const W=480,H=250,m={l:46,r:10,t:24,b:28}, n=I.fcf.length;
+  let cum=0; const cums = I.fcf.map(v => cum+=v);
+  const vals = I.fcf.concat(cums); const lo = Math.min(0,...vals)*1.1, hi = Math.max(0,...vals)*1.15;
+  const bw = (W-m.l-m.r)/n;
+  const X = i => m.l + i*bw + bw/2, Y = v => m.t + (hi-v)*(H-m.t-m.b)/(hi-lo);
+  const muted = css("--muted"), line = css("--line");
+  let g = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Investment case cash flows">`;
+  g += `<text x="${m.l}" y="12" font-size="12" font-weight="700" fill="${css("--ink")}">Free cash flow by year ($M); line = cumulative</text>`;
+  [lo, 0, hi].forEach(v => g += `<line x1="${m.l}" x2="${W-m.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="${v===0?css("--ink2"):line}"/><text x="${m.l-6}" y="${Y(v)+4}" font-size="11" text-anchor="end" fill="${muted}">${Math.round(v)}</text>`);
+  I.fcf.forEach((v,i) => {
+    const y0 = Y(Math.max(v,0)), h = Math.abs(Y(v)-Y(0));
+    g += `<rect x="${X(i)-bw*.3}" y="${y0}" width="${bw*.6}" height="${h}" rx="3" fill="${css(v<0?"--down":"--base")}"/>`;
+    g += `<text x="${X(i)}" y="${H-8}" font-size="11" text-anchor="middle" fill="${muted}">FY${String(I.years[i]).slice(2)}</text>`;
+  });
+  g += `<path d="${cums.map((v,i)=>(i?"L":"M")+X(i)+","+Y(v)).join("")}" fill="none" stroke="${css("--ink")}" stroke-width="2"/>`;
+  cums.forEach((v,i)=> g += `<circle cx="${X(i)}" cy="${Y(v)}" r="4" fill="${css("--ink")}" stroke="${css("--card")}" stroke-width="2"/>`);
+  g += `</svg>`;
+  el.innerHTML = g;
+  document.getElementById("invt").innerHTML = [
+    ["NPV incl. terminal value", "$"+I.npv.toLocaleString()+"M"],
+    ["Share of NPV from terminal value", Math.round(I.pvt/I.npv*100)+"%"],
+    ["NPV of explicit 5 years", "$"+(I.npv-I.pvt).toLocaleString()+"M"],
+    ["IRR (explicit cash flows)", (I.irr*100).toFixed(1)+"%"],
+    ["Payback vs. 4-year hurdle", I.pb.toFixed(1)+" years"],
+  ].map(([a,b]) => `<tr><td>${a}</td><td>${b}</td></tr>`).join("");
+}
+
+function render(){
+  renderKpis();
+  lineChart(document.getElementById("c-rev"), "total_rev", v=>"$"+(v/1000).toFixed(1)+"B", v=>"$"+(v/1000).toFixed(0)+"B");
+  lineChart(document.getElementById("c-fcf"), "fcf_margin", v=>fp(v), v=>(v*100).toFixed(0)+"%");
+}
+document.querySelectorAll(".seg button").forEach(b => b.addEventListener("click", () => {
+  current = b.dataset.s;
+  document.querySelectorAll(".seg button").forEach(x => x.setAttribute("aria-pressed", x===b));
+  render();
+}));
+render(); tornado(); invChart();
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { render(); tornado(); invChart(); });
+</script>
+</body>
+</html>
