@@ -1,0 +1,17 @@
+metric,label,unit,FY2023,FY2024,FY2025,source
+sub_rev,Subscription revenue,$M,8680,10646,12883,"FY2023: Q4/FY23 earnings release (Jan 24, 2024); FY2024-25: Q4/FY25 earnings release (Jan 28, 2026)"
+ps_rev,Professional services & other revenue,$M,291,338,395,Same as above
+total_rev,Total revenue,$M,8971,10984,13278,Same as above
+sub_cogs,Cost of subscription revenue (GAAP),$M,1606,1942,2569,Same as above
+ps_cogs,Cost of professional services revenue (GAAP),$M,315,345,414,Same as above
+sm,Sales & marketing (GAAP),$M,3301,3854,4388,Same as above
+rd,Research & development (GAAP),$M,2124,2543,2960,Same as above
+ga,General & administrative (GAAP),$M,863,936,1123,Same as above
+gaap_oi,Income from operations (GAAP),$M,762,1364,1824,Same as above
+sbc,Stock-based compensation,$M,1604,1746,1955,Same as above
+ng_om_reported,Non-GAAP operating margin (reported; rounded),%,0.28,0.295,0.31,Same as above
+ocf,Operating cash flow,$M,3398,4267,5444,Same as above
+capex,Purchases of property & equipment,$M,694,852,868,Same as above
+fcf,Free cash flow (non-GAAP),$M,2728,3455,4636,Same as above
+crpo,Current remaining performance obligations (year end),$M,8600,,12850,"FY2023: Q4/FY23 release ($8.60B); FY2025: Q4/FY25 release ($12.85B); FY2024 not stated in releases used"
+headcount,Full-time employees (year end),count,22668,26293,29187,"Form 10-K employee counts, as compiled by stockanalysis.com"
